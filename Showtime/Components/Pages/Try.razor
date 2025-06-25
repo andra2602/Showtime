@@ -1,0 +1,68 @@
+﻿@page "/try"
+@rendermode InteractiveServer
+<h3>Try me </h3>
+
+<Jumbotron Background="Background.Light" Margin="Margin.Is4.FromBottom">
+    <JumbotronTitle Size="JumbotronTitleSize.Is4">Cosul meu de cumparaturi!</JumbotronTitle>
+    <JumbotronSubtitle>
+        Muta fructele si legumele unde vrei...
+    </JumbotronSubtitle>
+    <Divider></Divider>
+    <Paragraph>
+        Doar nu incurca
+    </Paragraph>
+</Jumbotron>
+
+<DropContainer TItem="DropItem" Items="@items" ItemsFilter="@((item, dropZone) => item.Group == dropZone)" ItemDropped="@ItemDropped" Flex="Flex.Wrap.Grow.Is1">
+    <ChildContent>
+        <DropZone TItem="DropItem" Name="Basket" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
+            <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">Basket</Heading>
+        </DropZone>
+        <DropZone TItem="DropItem" Name="Fruit" DropAllowed="@((item) => item.Fruit)" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
+            <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">Fruit</Heading>
+        </DropZone>
+        <DropZone TItem="DropItem" Name="Vegetable" DropAllowed="@((item) => !item.Fruit)" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
+            <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">Vegetable</Heading>
+        </DropZone>
+    </ChildContent>
+    <ItemTemplate>
+        <Card Shadow="Shadow.Default" Margin="Margin.Is3.OnY">
+            <CardBody>
+                <Image Source="@context.Image" Text="DragDrop image example" Style="width:48px;height:48px;" />
+                @context.Name
+            </CardBody>
+        </Card>
+    </ItemTemplate>
+</DropContainer>
+
+
+@code {
+    public class DropItem
+    {
+    public string Name { get; init; }
+
+    public string Group { get; set; }
+
+    public string Image { get; set; }
+
+    public bool Fruit { get; set; }
+    }
+
+    private List<DropItem> items = new()
+    {
+        new DropItem() { Name = "Apple", Group = "Basket", Image = "https://t4.ftcdn.net/jpg/02/52/93/81/360_F_252938192_JQQL8VoqyQVwVB98oRnZl83epseTVaHe.jpg", Fruit = true },
+        new DropItem() { Name = "Bananas", Group = "Basket", Image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkmkleoNQAFdT3nC55_TIS8rxJi1d2HAzLMD5j9D7GHBEAwB2DLAvnkUDSFGjcnsoLM1U&usqp=CAU", Fruit = true },
+        new DropItem() { Name = "Lemon", Group = "Fruit", Image = "https://cdn.britannica.com/84/188484-050-F27B0049/lemons-tree.jpg", Fruit = true },
+        new DropItem() { Name = "Broccoli", Group = "Basket", Image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuIlJ4YMCTemRZamCzBUoLWp9ZVfW7ap80wA&s" },
+        new DropItem() { Name = "Strawberry", Group = "Fruit", Image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsfc_j-AdJhYQPXLocPvka0IBx_cgUclHDlA&s", Fruit = true },
+        new DropItem() { Name = "Cherry", Group = "Basket", Image = "https://www.koppert.co.uk/content/_processed_/b/c/csm_Cherry-34_bf99ee21f6.jpg", Fruit = true },
+        new DropItem() { Name = "Cabbage", Group = "Vegetable", Image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyDUN5SUsLMUAupeWKUS6iw_q_0fMGv6EPSg&s" },
+    };
+
+    private Task ItemDropped(DraggableDroppedEventArgs<DropItem> dropItem)
+    {
+        dropItem.Item.Group = dropItem.DropZoneName;
+        return Task.CompletedTask;
+    }
+}
+
