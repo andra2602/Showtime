@@ -1,34 +1,30 @@
 ﻿@page "/try"
 @rendermode InteractiveServer
-<h3>Try me </h3>
 
 <Jumbotron Background="Background.Light" Margin="Margin.Is4.FromBottom">
-    <JumbotronTitle Size="JumbotronTitleSize.Is4">Cosul meu de cumparaturi!</JumbotronTitle>
+    <JumbotronTitle Size="JumbotronTitleSize.Is4">STAGES!</JumbotronTitle>
     <JumbotronSubtitle>
-        Muta fructele si legumele unde vrei...
+        Move the artists wherever you want
     </JumbotronSubtitle>
     <Divider></Divider>
-    <Paragraph>
-        Doar nu incurca
-    </Paragraph>
 </Jumbotron>
 
 <DropContainer TItem="DropItem" Items="@items" ItemsFilter="@((item, dropZone) => item.Group == dropZone)" ItemDropped="@ItemDropped" Flex="Flex.Wrap.Grow.Is1">
     <ChildContent>
-        <DropZone TItem="DropItem" Name="Basket" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
-            <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">Basket</Heading>
+        <DropZone TItem="DropItem" Name="Artisti" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
+            <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">ARTISTS</Heading>
         </DropZone>
-        <DropZone TItem="DropItem" Name="Fruit" DropAllowed="@((item) => item.Fruit)" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
-            <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">Fruit</Heading>
+        <DropZone TItem="DropItem" Name="Scena1" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
+            <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">STAGE 1</Heading>
         </DropZone>
-        <DropZone TItem="DropItem" Name="Vegetable" DropAllowed="@((item) => !item.Fruit)" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
-            <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">Vegetable</Heading>
+        <DropZone TItem="DropItem" Name="Scena2" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
+            <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">STAGE 2</Heading>
         </DropZone>
     </ChildContent>
     <ItemTemplate>
-        <Card Shadow="Shadow.Default" Margin="Margin.Is3.OnY">
+        <Card Shadow="Shadow.Default" Margin="Margin.Is3.OnY" Style="background:#e7ecff">
             <CardBody>
-                <Image Source="@context.Image" Text="DragDrop image example" Style="width:48px;height:48px;" />
+                <Image Source="@context.Image" Text="DragDrop image example" Style="width:60px;height:55px;" />
                 @context.Name
             </CardBody>
         </Card>
@@ -45,18 +41,18 @@
 
     public string Image { get; set; }
 
-    public bool Fruit { get; set; }
+        public bool Scena1 { get; set; }
     }
 
     private List<DropItem> items = new()
     {
-        new DropItem() { Name = "Apple", Group = "Basket", Image = "https://t4.ftcdn.net/jpg/02/52/93/81/360_F_252938192_JQQL8VoqyQVwVB98oRnZl83epseTVaHe.jpg", Fruit = true },
-        new DropItem() { Name = "Bananas", Group = "Basket", Image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkmkleoNQAFdT3nC55_TIS8rxJi1d2HAzLMD5j9D7GHBEAwB2DLAvnkUDSFGjcnsoLM1U&usqp=CAU", Fruit = true },
-        new DropItem() { Name = "Lemon", Group = "Fruit", Image = "https://cdn.britannica.com/84/188484-050-F27B0049/lemons-tree.jpg", Fruit = true },
-        new DropItem() { Name = "Broccoli", Group = "Basket", Image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuIlJ4YMCTemRZamCzBUoLWp9ZVfW7ap80wA&s" },
-        new DropItem() { Name = "Strawberry", Group = "Fruit", Image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTsfc_j-AdJhYQPXLocPvka0IBx_cgUclHDlA&s", Fruit = true },
-        new DropItem() { Name = "Cherry", Group = "Basket", Image = "https://www.koppert.co.uk/content/_processed_/b/c/csm_Cherry-34_bf99ee21f6.jpg", Fruit = true },
-        new DropItem() { Name = "Cabbage", Group = "Vegetable", Image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyDUN5SUsLMUAupeWKUS6iw_q_0fMGv6EPSg&s" },
+        new DropItem() { Name = "Alok", Group = "Artisti", Image = "https://d3vhc53cl8e8km.cloudfront.net/artists/1646/d614c730-5ba0-11ed-b991-0ee6b8365494.jpg"},
+        new DropItem() { Name = "Axwell", Group = "Artisti", Image = "https://weraveyou.com/wp-content/uploads/2021/01/Axwell.jpg"},
+        new DropItem() { Name = "Claptone", Group = "Scena1", Image = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/70/Claptone%2C_Beats_for_Love_2019_01.jpg/250px-Claptone%2C_Beats_for_Love_2019_01.jpg"},
+        new DropItem() { Name = "Don Diablo", Group = "Artisti", Image = "https://static1.squarespace.com/static/66356de7b498eb35880f26a5/t/6635843acf2e927056729ab0/1714783293897/DONDIABLO_2024_JPG_4.jpg?format=1500w" },
+        new DropItem() { Name = "Kaaze", Group = "Scena1", Image = "https://i.scdn.co/image/ab67616100005174e933d51a7f20f154e64023d5"},
+        new DropItem() { Name = "Kshmr", Group = "Artisti", Image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSkm16DqcunT9ydopYJrAC0Q5Zo4c5-yccHfQ&s"},
+        new DropItem() { Name = "Sickick", Group = "Scena2", Image = "https://i1.sndcdn.com/avatars-000710405842-zq88o9-t1080x1080.jpg" },
     };
 
     private Task ItemDropped(DraggableDroppedEventArgs<DropItem> dropItem)
