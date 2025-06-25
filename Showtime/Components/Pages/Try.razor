@@ -11,13 +11,13 @@
 
 <DropContainer TItem="DropItem" Items="@items" ItemsFilter="@((item, dropZone) => item.Group == dropZone)" ItemDropped="@ItemDropped" Flex="Flex.Wrap.Grow.Is1">
     <ChildContent>
-        <DropZone TItem="DropItem" Name="Artisti" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
+        <DropZone TItem="DropItem" Name="Artisti" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1" Style="border: 3px dashed #0024ab; background-color: #fcf3cf;">
             <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">ARTISTS</Heading>
         </DropZone>
-        <DropZone TItem="DropItem" Name="Scena1" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
+        <DropZone TItem="DropItem" Name="Scena1" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1" Style="border: 3px dashed #0024ab; background-color: #fcf3cf;">
             <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">STAGE 1</Heading>
         </DropZone>
-        <DropZone TItem="DropItem" Name="Scena2" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
+        <DropZone TItem="DropItem" Name="Scena2" Border="Border.Rounded" Background="Background.Light" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1" Style="border: 3px dashed #0024ab; background-color: #fcf3cf;">
             <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">STAGE 2</Heading>
         </DropZone>
     </ChildContent>
