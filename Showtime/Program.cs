@@ -2,12 +2,23 @@ using Showtime.Components;
 using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
+using Showtime.Context;
+using Microsoft.EntityFrameworkCore;
+using Showtime.Repositories.Interfaces;
+using Showtime.Repositories.Implementation;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+builder.Services.AddDbContext<ShowTimeContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnectionString")));
+
+builder.Services.AddScoped<IRepositoryBand, RepositoryBand>();
+builder.Services.AddScoped<IRepositoryBooking, RepositoryBooking>();
+builder.Services.AddScoped<IRepositoryFestival, RepositoryFestival>();
 
 builder.Services
     .AddBlazorise(options =>
