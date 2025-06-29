@@ -6,8 +6,8 @@ namespace Showtime.Repositories.Implementation
 {
     public class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
-        private readonly ShowTimeContext _context;
-        private readonly DbSet<T> _dbSet;
+        protected readonly ShowTimeContext _context;
+        protected readonly DbSet<T> _dbSet;
 
         public RepositoryBase(ShowTimeContext context)
         {
