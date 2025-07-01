@@ -1,0 +1,144 @@
+﻿@page "/bands"
+@using Showtime.Entities
+@using Showtime.Repositories.Interfaces
+@using Showtime.Repositories.Implementation
+@inject IRepositoryBand BandRepo
+@using Blazorise.DataGrid
+@using Blazorise
+@using Blazorise.Icons.FontAwesome
+@inject NavigationManager NavigationManager
+
+<style> 
+    h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.2rem;
+    color: #000;
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    }
+    /* Action buttons styling */
+    .b-datagrid td a[href*="edit"],
+    .b-datagrid td a[href*="details"],
+    .b-datagrid td a[href*="delete"] {
+        display: inline-block;
+        padding: 6px 12px;
+        margin-right: 6px;
+        border-radius: 6px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        border: none;
+        transition: all 0.3s ease-in-out;
+    }
+
+    /* Butonul "Edit" */
+    .b-datagrid td a[href*="edit"] {
+        background-color: #7a1fa2;
+        color: #fff;
+        box-shadow: 0 0 5px #7a1fa2;
+    }
+
+    /* Butonul "Details" */
+    .b-datagrid td a[href*="details"] {
+        background-color: #5e00a3;
+        color: #fff;
+        box-shadow: 0 0 5px #5e00a3;
+    }
+
+    /* Butonul "Delete" */
+    .b-datagrid td a[href*="delete"] {
+        background-color: #cc0044;
+        color: #fff;
+        box-shadow: 0 0 5px #cc0044;
+    }
+
+    .b-datagrid td a:hover {
+        transform: translateY(-1px) scale(1.05);
+        filter: brightness(1.15);
+        box-shadow: 0 0 10px #ffffffaa;
+    }
+
+    .fab-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+    }
+
+    .fab-button {
+        width: 60px;
+        height: 60px;
+        background-color: #7a1fa2;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 0 10px rgba(122, 31, 162, 0.6);
+        transition: all 0.3s ease;
+        font-size: 24px;
+    }
+
+        .fab-button:hover {
+            transform: scale(1.1);
+            background-color: #5e00a3;
+            box-shadow: 0 0 20px rgba(122, 31, 162, 0.9);
+            cursor: pointer;
+        }
+
+        .fab-button .fa-plus {
+            font-size: 24px;
+        }
+
+</style> 
+
+
+
+<h3>BAND LIST</h3>
+
+
+<DataGrid TItem="Band" 
+Data = "_bands"
+ShowPager = "true"
+PageSize = "5"
+Responsive ="true"
+Striped ="true"
+Bordered = "true"
+Hoverable = "true">
+
+    <DataGridColumns>
+        <DataGridColumn TItem= "Band" Field="@nameof(Band.Name)" Caption="Band Name"></DataGridColumn>
+        <DataGridColumn TItem= "Band" Field="@nameof(Band.Genre)" Caption="Band Genre"></DataGridColumn>
+
+        <DataGridColumn TItem= "Band" Caption="Actions">
+            <DisplayTemplate>
+                <a href="@($"bands/edit/{context.Id}")">Edit</a>
+                <a href="@($"/bands/details/{context.Id}")">Details</a>
+                <a href="@($"bands/delete/{context.Id}")">Delete</a>
+            </DisplayTemplate>
+        </DataGridColumn>
+    </DataGridColumns>
+</DataGrid>
+
+<div class="fab-container">
+    <Button Color="Color.Primary" Type="ButtonType.Button" Clicked="@NavigateToCreate" Class="fab-button">
+        <Blazorise.Icon Name="FontAwesomeIcons.Plus" />
+    </Button>
+</div>
+
+
+@code {
+    private List<Band> _bands = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        _bands = (await BandRepo.GetAllAsync()).ToList();
+    }
+    private void NavigateToCreate()
+    {
+        NavigationManager.NavigateTo("/create");
+    }
+
+}

@@ -2,6 +2,7 @@ using Showtime.Components;
 using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
+using Blazorise.DataGrid;
 using Showtime.Context;
 using Microsoft.EntityFrameworkCore;
 using Showtime.Repositories.Interfaces;
