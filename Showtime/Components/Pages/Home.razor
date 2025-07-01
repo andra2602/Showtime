@@ -2,6 +2,99 @@
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
 
-Welcome to your new app.
+<style>
+    /* Stiluri generale pentru pagina de Home */
+    body {
+        background-color: #000 !important; 
+        color: #e0e0e0 !important; 
+    }
+
+    /* Stiluri pentru titluri (H1, H2) - Font "Orbitron" */
+    h1, h2 {
+        font-family: 'Orbitron', sans-serif; 
+        text-transform: uppercase; 
+        letter-spacing: 3px; 
+        text-shadow: 0 0 15px #FF00FF, 0 0 25px #FF00FF, 0 0 35px #FF00FF; 
+        color: #fff; 
+    }
+
+    .festival-highlight {
+        font-family: 'Montserrat', sans-serif; 
+        font-style: italic;
+        color: #00FFFF;
+        text-shadow: 0 0 10px #00FFFF; 
+        font-size: 1.5em;
+        margin-top: 15px;
+        display: block;
+    }
+
+    .lead {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.1em;
+        line-height: 1.6;
+        color: #B0C4DE;
+    }
+
+    .btn-primary {
+        background-color: #9932CC !important;
+        border-color: #9932CC !important;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 0 15px rgba(153, 50, 204, 0.6); 
+        transition: all 0.3s ease;
+    }
+
+        .btn-primary:hover {
+            background-color: #8A2BE2 !important; 
+            border-color: #8A2BE2 !important;
+            box-shadow: 0 0 20px rgba(153, 50, 204, 0.8);
+            transform: translateY(-2px);
+        }
+
+    .btn-secondary {
+        background-color: #4169E1 !important; 
+        border-color: #4169E1 !important;
+        font-family: 'Orbitron', sans-serif;
+        font-weight: bold;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 0 15px rgba(65, 105, 225, 0.6); 
+        transition: all 0.3s ease;
+    }
+
+        .btn-secondary:hover {
+            background-color: #1E90FF !important; 
+            border-color: #1E90FF !important;
+            box-shadow: 0 0 20px rgba(65, 105, 225, 0.8);
+            transform: translateY(-2px);
+        }
+</style>
+
+<div class="text-center mt-5">
+    <h1>Welcome to ShowTime!</h1>
+    <h2 class=" festival-highlight">Where every note comes alive and every event becomes a memory.</h2>
+
+    <div class="mt-4">
+        <img src="/images/festival.jpg"
+             alt="Showtime App Banner"
+             class="img-fluid rounded shadow"
+             style="max-width: 80%; height: auto;" />
+    </div>
+
+    <p class="lead mt-4">Discover your favorite bands, explore electrifying festivals, and prepare for an unforgettable musical experience.</p>
+
+    <div class="mt-5">
+        <a href="/bands" class="btn btn-primary btn-lg">
+            <Blazorise.Icon Name="FontAwesomeIcons.Music" /> &nbsp; Discover Bands
+        </a>
+        @* <a href="/festivals" class="btn btn-secondary btn-lg ms-3"> *@
+        @*     <Blazorise.Icon Name="FontAwesomeIcons.CalendarAlt" /> &nbsp; View Festivals *@
+        @* </a> *@
+    </div>
+</div>
+
+@code {
+}

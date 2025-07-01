@@ -1,0 +1,181 @@
+﻿@page "/bands/edit/{Id:guid}"
+@using Showtime.Entities
+@using Showtime.Enums
+@using Showtime.Repositories.Interfaces
+@using Microsoft.AspNetCore.Components.Forms
+@using Blazorise
+@inject IRepositoryBand BandRepository
+@inject NavigationManager Navigation
+
+<h3>Edit Band</h3>
+
+<style>
+    body {
+        background-color: #FFF;
+        color: #f0f0f0;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.2rem;
+        color: #000;
+        text-align: center;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+    EditForm {
+        background-color: #1e1e1e;
+        padding: 2rem;
+        border-radius: 12px;
+        max-width: 600px;
+        margin: 0 auto;
+        box-shadow: 0 0 20px rgba(122, 31, 162, 0.2);
+    }
+
+    Label {
+        font-family: 'Orbitron', sans-serif;
+        font-weight: 600;
+        color: rgba(122, 31, 162, 0.8);
+        margin-bottom: 0.3rem;
+    }
+
+    .b-field {
+        margin-bottom: 1.5rem;
+    }
+
+    .b-input,
+    .b-select {
+        background-color: #2a2a2a;
+        color: white;
+        border: 1px solid #7a1fa2;
+        border-radius: 6px;
+        padding: 0.5rem;
+        font-size: 1rem;
+        transition: 0.3s;
+    }
+
+        .b-input:focus,
+        .b-select:focus {
+            border-color: #9932cc;
+            box-shadow: 0 0 5px #9932cc;
+        }
+
+    .b-validation-message {
+        color: #ff4c4c;
+        font-size: 0.85rem;
+        margin-top: 0.3rem;
+    }
+
+    .form-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-save {
+        background-color: #7a1fa2;
+        color: white;
+        font-weight: bold;
+        padding: 0.6rem 1.2rem;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+        .btn-save:hover {
+            background-color: #5e00a3;
+            box-shadow: 0 0 10px #7a1fa2;
+            transform: scale(1.05);
+        }
+
+    .btn-cancel {
+        background-color: #444;
+        color: #eee;
+        font-weight: bold;
+        padding: 0.6rem 1.2rem;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+        .btn-cancel:hover {
+            background-color: #666;
+            transform: scale(1.05);
+        }
+</style>
+
+
+@if (originalBand == null) 
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <EditForm Model="@bandToEdit" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+
+        <Field>
+            <Label>Band Name</Label>
+            <TextEdit @bind-Text="bandToEdit.Name" /> <ValidationMessage For="@(() => bandToEdit.Name)" />
+        </Field>
+
+        <Field>
+            <Label>Genre</Label>
+            <Select TValue="Genre" @bind-SelectedValue="bandToEdit.Genre">
+                @foreach (var genre in Enum.GetValues(typeof(Genre)))
+                {
+                    <SelectItem Value="@genre">@genre</SelectItem>
+                }
+            </Select>
+        </Field>
+
+        <Field Class="form-buttons">
+            <Button Class="btn-save" Clicked="HandleValidSubmit">Save</Button>
+            <Button Class="btn-cancel" @onclick="Cancel">Cancel</Button>
+        </Field>
+
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private Band? originalBand; 
+    private Band? bandToEdit;
+
+    protected override async Task OnInitializedAsync()
+    {
+        originalBand = await BandRepository.GetByIdAsync(Id);
+
+        if (originalBand != null)
+        {
+            bandToEdit = new Band
+                {
+                    Id = originalBand.Id,
+                    Name = originalBand.Name,
+                    Genre = originalBand.Genre,
+                };
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (bandToEdit == null || originalBand == null) return;
+
+        originalBand.Name = bandToEdit.Name;
+        originalBand.Genre = bandToEdit.Genre;
+
+        BandRepository.Update(originalBand); 
+        await BandRepository.SaveChangesAsync();
+        Navigation.NavigateTo("/bands");
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/bands");
+    }
+}

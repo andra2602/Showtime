@@ -1,0 +1,134 @@
+﻿@page "/create"
+@using Showtime.Entities
+@using Showtime.Repositories.Interfaces
+@using Showtime.Enums
+@inject IRepositoryBand BandRepo
+@inject NavigationManager NavigationManager
+
+<style>
+    body {
+        background-color: #ffffff;
+        color: #000;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.2rem;
+        color: #5e00a3;
+        text-align: center;
+        margin-bottom: 2rem;
+        margin-top: 1rem;
+    }
+
+    .form-container {
+        background-color: #fdfdfd;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 0 15px rgba(122, 31, 162, 0.1);
+        border-radius: 10px;
+        padding: 2rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .field-group {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    label {
+        font-weight: 600;
+        color: #5e00a3;
+        margin-bottom: 0.5rem;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    /* Save Button */
+    .btn-save {
+        background-color: #7a1fa2;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 0.6rem 1.5rem;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 0 8px rgba(122, 31, 162, 0.4);
+    }
+
+        .btn-save:hover {
+            background-color: #5e00a3;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 0 12px rgba(122, 31, 162, 0.7);
+        }
+
+    /* Back Button */
+    .btn-back {
+        background-color: #5e00a3;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 0.6rem 1.5rem;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 0 8px rgba(94, 0, 163, 0.4);
+    }
+
+        .btn-back:hover {
+            background-color: #7a1fa2;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 0 12px rgba(94, 0, 163, 0.7);
+        }
+</style>
+
+<h3>Create Band</h3>
+
+<div class="form-container">
+    <Fields>
+        <div class="field-group">
+            <Field Style="flex: 1;">
+                <Label>Band Name:</Label>
+                <TextEdit @bind-Text="Band.Name" />
+            </Field>
+            <Field Style="flex: 1;">
+                <Label>Genre:</Label>
+                <Select TValue="Genre" @bind-SelectedValue="Band.Genre">
+                    @foreach (Genre genre in Enum.GetValues(typeof(Genre)))
+                    {
+                        <SelectItem Value="@genre">@genre.ToString()</SelectItem>
+                    }
+                </Select>
+            </Field>
+        </div>
+    </Fields>
+
+    <div class="button-group">
+        <Button Class="btn-save" Clicked="HandleSubmit">Save</Button>
+        <Button Class="btn-back" Clicked="@GoBack">Back to the list</Button>
+    </div>
+</div>
+
+@code {
+    private Band Band { get; set; } = new Band { Genre = Genre.Pop };
+
+    private async Task HandleSubmit()
+    {
+        await BandRepo.AddAsync(Band);
+        await BandRepo.SaveChangesAsync();
+        NavigationManager.NavigateTo("/bands");
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/bands");
+    }
+}
