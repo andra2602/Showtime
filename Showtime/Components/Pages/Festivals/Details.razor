@@ -1,10 +1,10 @@
-﻿@page "/bands/details/{Id:guid}"
+﻿@page "/festivals/details/{Id:guid}"
 @using Showtime.Repositories.Interfaces
 @using Showtime.Entities
 @inject NavigationManager NavigationManager
-@inject IRepositoryBand BandRepository
+@inject IRepositoryFestival FestivalRepository
 
-<h3>Band Details</h3>
+<h3>Details</h3>
 <style>
     body {
         background-color: #fff;
@@ -70,7 +70,7 @@
         }
 </style>
 
-@if (band == null)
+@if (festival == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -78,10 +78,13 @@ else
 {
     <Blazorise.Card Class="mb-3">
         <CardHeader>
-            <CardTitle>@band.Name</CardTitle>
+            <CardTitle>@festival.Name</CardTitle>
         </CardHeader>
         <CardBody>
-            <p><strong>Genre:</strong> @band.Genre</p>
+            <p><strong>Location: </strong> @festival.Location</p>
+            <p><strong>StartDate: </strong> @festival.StartDate?.ToString("yyyy-MM-dd") </p>
+            <p><strong>EndDate: </strong>  @festival.EndDate?.ToString("yyyy-MM-dd") </p>
+            <p><strong>Description: </strong> @festival.Description</p>
         </CardBody>
         <CardFooter Class="d-flex justify-content-end">
             <Button Class="btn-back" @onclick="GoBack">Back to list</Button>
@@ -89,21 +92,20 @@ else
     </Blazorise.Card>
 
 }
-
 @code {
     [Parameter]
     public Guid Id { get; set; }
 
-    private Band? band;
+    private Festival? festival;
 
     protected override async Task OnInitializedAsync()
     {
-        band = await BandRepository.GetByIdAsync(Id);
+        festival = await FestivalRepository.GetByIdAsync(Id);
     }
 
     private void GoBack()
     {
-        NavigationManager.NavigateTo("/bands");
+        NavigationManager.NavigateTo("/festivals");
     }
 
 }

@@ -1,0 +1,209 @@
+﻿@page "/festivals/edit/{Id:guid}"
+@using Showtime.Entities
+@using Showtime.Enums
+@using Showtime.Repositories.Interfaces
+@using Microsoft.AspNetCore.Components.Forms
+@using Blazorise
+@inject IRepositoryFestival FestivalRepository
+@inject NavigationManager Navigation
+
+<h3>Edit Festival</h3>
+
+<style>
+    body {
+    background-color: #FFF;
+    color: #f0f0f0;
+    font-family: 'Montserrat', sans-serif;
+    }
+
+    h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.2rem;
+    color: #5e00a3;
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    }
+
+    EditForm {
+    background-color: #1e1e1e;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 0 20px rgba(122, 31, 162, 0.2);
+    }
+
+    Label {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 600;
+    color: rgba(122, 31, 162, 0.8);
+    margin-bottom: 0.3rem;
+    }
+
+    .b-field {
+    margin-bottom: 1.5rem;
+    }
+
+    .b-input,
+    .b-select {
+    background-color: #2a2a2a;
+    color: white;
+    border: 1px solid #7a1fa2;
+    border-radius: 6px;
+    padding: 0.5rem;
+    font-size: 1rem;
+    transition: 0.3s;
+    }
+
+    .b-input:focus,
+    .b-select:focus {
+    border-color: #9932cc;
+    box-shadow: 0 0 5px #9932cc;
+    }
+
+    .b-validation-message {
+    color: #ff4c4c;
+    font-size: 0.85rem;
+    margin-top: 0.3rem;
+    }
+
+    .form-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    }
+
+    .btn-save {
+    background-color: #7a1fa2;
+    color: white;
+    font-weight: bold;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: none;
+    }
+
+    .btn-save:hover {
+    background-color: #5e00a3;
+    box-shadow: 0 0 10px #7a1fa2;
+    transform: scale(1.05);
+    }
+
+    .btn-cancel {
+    background-color: #cc0044;
+    color: #eee;
+    font-weight: bold;
+    padding: 0.6rem 1.2rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: none;
+    }
+
+    .btn-cancel:hover {
+    background-color: #cc0044;
+    transform: scale(1.05);
+    }
+</style>
+
+@if (originalFestival == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <EditForm Model="@festivalToEdit" OnValidSubmit="HandleValidSubmit" OnFieldChanged="HandleFieldChanged">
+        <DataAnnotationsValidator />
+
+        <Field>
+            <Label>Festival Name</Label>
+            <TextEdit @bind-Text="festivalToEdit.Name" />
+            <ValidationMessage For="@(() => festivalToEdit.Name)" />
+        </Field>
+
+        <Field>
+            <Label>Festival Location</Label>
+            <TextEdit @bind-Text="festivalToEdit.Location" />
+            <ValidationMessage For="@(() => festivalToEdit.Location)" />
+        </Field>
+
+        <Field>
+            <Label>Start Date</Label>
+            <DateEdit @bind-Date="festivalToEdit.StartDate" />
+            <ValidationMessage For="@(() => festivalToEdit.StartDate)" />
+        </Field>
+
+        <Field>
+            <Label>End Date</Label>
+            <DateEdit @bind-Date="festivalToEdit.EndDate" />
+            <ValidationMessage For="@(() => festivalToEdit.EndDate)" />
+        </Field>
+
+        <Field>
+            <Label>Description</Label>
+            <TextEdit @bind-Text="festivalToEdit.Description" TextMode="TextMode.MultiLine" />
+            <ValidationMessage For="@(() => festivalToEdit.Description)" />
+        </Field>
+
+        <Field Class="form-buttons">
+            <Button Class="btn-save" Type="ButtonType.Submit">Save</Button>
+            <Button Class="btn-cancel" @onclick="Cancel">Cancel</Button>
+        </Field>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private Festival? originalFestival;
+    private Festival? festivalToEdit;
+
+    protected override async Task OnInitializedAsync()
+    {
+        originalFestival = await FestivalRepository.GetByIdAsync(Id);
+
+        if (originalFestival != null)
+        {
+            
+            festivalToEdit = new Festival
+                {
+                    Id = originalFestival.Id,
+                    Name = originalFestival.Name,
+                    Location = originalFestival.Location,
+                    StartDate = originalFestival.StartDate,
+                    EndDate = originalFestival.EndDate,
+                    Description = originalFestival.Description
+                };
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (festivalToEdit == null || originalFestival == null)
+            return;
+
+        originalFestival.Name = festivalToEdit.Name;
+        originalFestival.Location = festivalToEdit.Location;
+        originalFestival.StartDate = festivalToEdit.StartDate;
+        originalFestival.EndDate = festivalToEdit.EndDate;
+        originalFestival.Description = festivalToEdit.Description;
+
+        FestivalRepository.Update(originalFestival);
+        await FestivalRepository.SaveChangesAsync();
+
+        Navigation.NavigateTo("/festivals");
+    }
+
+    private void Cancel()
+    {
+        Navigation.NavigateTo("/festivals");
+    }
+
+    private void HandleFieldChanged(FieldChangedEventArgs args)
+    {
+        Console.WriteLine($"Changed field: {args.FieldIdentifier.FieldName}");
+    }
+
+}

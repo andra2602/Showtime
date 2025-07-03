@@ -1,9 +1,11 @@
-﻿@page "/create"
+﻿@page "/festivals/create"
 @using Showtime.Entities
 @using Showtime.Repositories.Interfaces
 @using Showtime.Enums
-@inject IRepositoryBand BandRepo
+@inject IRepositoryFestival FestivalRepo
 @inject NavigationManager NavigationManager
+
+<h3>Create</h3>
 
 <style>
     body {
@@ -90,32 +92,43 @@
         }
 </style>
 
-<h3>Create Band</h3>
-
-<EditForm Model="@Band" OnValidSubmit="HandleSubmit">
+<EditForm Model="@Festival" OnValidSubmit="HandleSubmit">
     <DataAnnotationsValidator />
     <Blazorise.ValidationSummary />
 
-    <div class="form-container">
-        <Fields>
-            <div class="field-group">
-                <Field Style="flex: 1;">
-                    <Label>Band Name:</Label>
-                    <TextEdit @bind-Text="Band.Name" />
-                    <ValidationMessage For="@(() => Band.Name)" />
-                </Field>
+    <div class="form-container" style="position: relative; overflow: visible;">
+        <div class="field-group" style="display: flex; flex-direction: column; gap: 1rem;">
 
-                <Field Style="flex: 1;">
-                    <Label>Genre:</Label>
-                    <Select TValue="Genre" @bind-SelectedValue="Band.Genre">
-                        @foreach (Genre genre in Enum.GetValues(typeof(Genre)))
-                        {
-                            <SelectItem Value="@genre">@genre.ToString()</SelectItem>
-                        }
-                    </Select>
-                </Field>
-            </div>
-        </Fields>
+            <Field>
+                <Label>Festival Name:</Label>
+                <TextEdit @bind-Text="Festival.Name" />
+                <ValidationMessage For="@(() => Festival.Name)" />
+            </Field>
+
+            <Field>
+                <Label>Festival Location:</Label>
+                <TextEdit @bind-Text="Festival.Location" />
+                <ValidationMessage For="@(() => Festival.Location)" />
+            </Field>
+
+            <Field>
+                <Label>Start Date:</Label>
+                <DatePicker TValue="DateTime?" @bind-Date="Festival.StartDate" />
+                <ValidationMessage For="@(() => Festival.StartDate)" />
+            </Field>
+
+            <Field>
+                <Label>End Date:</Label>
+                <DatePicker TValue="DateTime?" @bind-Date="Festival.EndDate" />
+                <ValidationMessage For="@(() => Festival.EndDate)" />
+            </Field>
+
+            <Field>
+                <Label>Festival Description:</Label>
+                <TextEdit @bind-Text="Festival.Description" />
+                <ValidationMessage For="@(() => Festival.Description)" />
+            </Field>
+        </div>
 
         <div class="button-group">
             <Button Class="btn-save" Type="ButtonType.Submit">Save</Button>
@@ -124,18 +137,20 @@
     </div>
 </EditForm>
 
-@code {
-    private Band Band { get; set; } = new Band { Genre = Genre.Pop };
 
+
+@code {
+    private Festival Festival { get; set; } = new Festival();
+   
     private async Task HandleSubmit()
     {
-        await BandRepo.AddAsync(Band);
-        await BandRepo.SaveChangesAsync();
-        NavigationManager.NavigateTo("/bands");
+        await FestivalRepo.AddAsync(Festival);
+        await FestivalRepo.SaveChangesAsync();
+        NavigationManager.NavigateTo("/festivals");
     }
 
     private void GoBack()
     {
-        NavigationManager.NavigateTo("/bands");
+        NavigationManager.NavigateTo("/festivals");
     }
 }
