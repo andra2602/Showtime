@@ -1,4 +1,5 @@
 ﻿@page "/bands"
+@rendermode InteractiveServer
 @using Showtime.Entities
 @using Showtime.Repositories.Interfaces
 @using Showtime.Repositories.Implementation
@@ -12,7 +13,7 @@
     h3 {
     font-family: 'Orbitron', sans-serif;
     font-size: 2.2rem;
-    color: #000;
+        color: #5e00a3;
     text-align: center;
     margin-bottom: 2rem;
     position: relative;
@@ -98,9 +99,16 @@
 
 <h3>BAND LIST</h3>
 
+<div style="max-width: 400px; margin: 0 auto 1.5rem auto;">
+    <TextEdit Placeholder="Search band name..."
+              Text="@searchTerm"
+              TextChanged="FilterBands"
+              Class="b-input" />
+</div>
 
-<DataGrid TItem="Band" 
-Data = "_bands"
+
+<DataGrid TItem="Band"
+Data="@filteredBands"
 ShowPager = "true"
 PageSize = "5"
 Responsive ="true"
@@ -130,12 +138,34 @@ Hoverable = "true">
 
 
 @code {
-    private List<Band> _bands = new();
+    private List<Band> _bands = new();          // lista completă
+    private List<Band> filteredBands = new();   // lista filtrată
+    private string searchTerm = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         _bands = (await BandRepo.GetAllAsync()).ToList();
+        filteredBands = _bands; // inițial, arătăm tot
     }
+
+    private Task FilterBands(string value)
+    {
+        searchTerm = value;
+
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            filteredBands = _bands;
+        }
+        else
+        {
+            filteredBands = _bands
+                .Where(b => b.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+        }
+
+        return Task.CompletedTask;
+    }
+
     private void NavigateToCreate()
     {
         NavigationManager.NavigateTo("/create");

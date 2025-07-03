@@ -1,0 +1,144 @@
+﻿@page "/festivals/delete/{Id:guid}"
+@using Showtime.Entities
+@using Showtime.Repositories.Interfaces
+@inject IRepositoryFestival FestivalRepository
+@inject NavigationManager NavigationManager
+
+<h3>Delete Festival</h3>
+
+<style>
+    body {
+        background-color: #fff;
+        color: rgba(204, 0, 68, 0.8);
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.2rem;
+        color: #000;
+        text-align: center;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+
+
+    .b-card {
+        background-color: #fff;
+        border: 1px solid #cc0044;
+        border-radius: 10px;
+        box-shadow: 0 0 20px rgba(204, 0, 68, 0.3);
+        max-width: 600px;
+        margin: 0 auto 2rem auto;
+        color: #000;
+    }
+
+    .b-card-header {
+        background-color: #fff;
+        border-bottom: 1px solid #cc0044;
+    }
+
+    .b-card-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.5rem;
+        color: #cc0044;
+        text-align: center;
+    }
+
+    .b-card-body p {
+        font-size: 1.1rem;
+        color: #ccc;
+    }
+
+    .b-card-footer {
+        background-color: #fff;
+        border-top: 1px solid #cc0044;
+    }
+
+    .btn-delete {
+        background-color: #cc0044;
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 6px;
+        padding: 0.5rem 1.2rem;
+        transition: all 0.3s ease;
+    }
+
+        .btn-delete:hover {
+            background-color: #cc0044;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(255, 76, 76, 0.8);
+            transform: scale(1.05);
+        }
+
+    .btn-cancel {
+        background-color: #5e00a3;
+        color: white;
+        font-weight: bold;
+        border: none;
+        border-radius: 6px;
+        padding: 0.5rem 1.2rem;
+        transition: all 0.3s ease;
+    }
+
+        .btn-cancel:hover {
+            background-color: #7a1fa2;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(122, 31, 162, 0.7);
+            transform: scale(1.05);
+        }
+</style>
+
+@if (festival == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <Blazorise.Card Class="mb-3 b-card">
+        <CardHeader Class="b-card-header">
+            <CardTitle class="b-card-title">Are you sure?</CardTitle>
+        </CardHeader>
+        <CardBody>
+            <p>You are about to delete the festival: <strong>@festival.Name</strong></p>
+            <p>All related data will be deleted...</p>
+            
+        </CardBody>
+        <CardFooter Class="b-card-footer d-flex justify-content-end">
+            <Button Class="btn-delete me-2" @onclick="DeleteFestival">Yes, Delete</Button>
+            <Button Class="btn-cancel" @onclick="Cancel">Cancel</Button>
+        </CardFooter>
+    </Blazorise.Card>
+
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private Festival? festival;
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        await Task.Delay(500);
+
+        festival = await FestivalRepository.GetByIdAsync(Id);
+    }
+
+    private async Task DeleteFestival()
+    {
+        if (festival is not null)
+        {
+            FestivalRepository.Delete(festival);
+            await FestivalRepository.SaveChangesAsync();
+            NavigationManager.NavigateTo("/festivals");
+        }
+    }
+
+    private void Cancel()
+    {
+        NavigationManager.NavigateTo("/festivals");
+    }
+}

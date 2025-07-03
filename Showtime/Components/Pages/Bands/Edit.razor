@@ -19,7 +19,7 @@
     h3 {
         font-family: 'Orbitron', sans-serif;
         font-size: 2.2rem;
-        color: #000;
+        color: #5e00a3;
         text-align: center;
         margin-bottom: 2rem;
         position: relative;
@@ -92,7 +92,7 @@
         }
 
     .btn-cancel {
-        background-color: #444;
+        background-color: #cc0044;
         color: #eee;
         font-weight: bold;
         padding: 0.6rem 1.2rem;
@@ -102,7 +102,7 @@
     }
 
         .btn-cancel:hover {
-            background-color: #666;
+            background-color: #cc0044;
             transform: scale(1.05);
         }
 </style>
@@ -114,7 +114,7 @@
 }
 else
 {
-    <EditForm Model="@bandToEdit" OnValidSubmit="HandleValidSubmit">
+    <EditForm Model="@bandToEdit" OnValidSubmit="HandleValidSubmit" OnFieldChanged="HandleFieldChanged">
         <DataAnnotationsValidator />
 
         <Field>
@@ -133,7 +133,7 @@ else
         </Field>
 
         <Field Class="form-buttons">
-            <Button Class="btn-save" Clicked="HandleValidSubmit">Save</Button>
+            <Button Class="btn-save" Type="ButtonType.Submit">Save</Button>
             <Button Class="btn-cancel" @onclick="Cancel">Cancel</Button>
         </Field>
 
@@ -177,5 +177,9 @@ else
     private void Cancel()
     {
         Navigation.NavigateTo("/bands");
+    }
+    private void HandleFieldChanged(FieldChangedEventArgs args)
+    {
+        Console.WriteLine($"Changed field: {args.FieldIdentifier.FieldName}");
     }
 }
