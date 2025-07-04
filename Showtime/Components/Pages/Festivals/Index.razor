@@ -157,7 +157,7 @@ Hoverable="true">
         filteredFestivals = _festivals;
     }
 
-    private Task FilterFestivals(string value)
+    private void FilterFestivals(string value)
     {
         searchTerm = value;
 
@@ -171,8 +171,6 @@ Hoverable="true">
                 .Where(b => b.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
-
-        return Task.CompletedTask;
     }
 
     private void NavigateToCreate()

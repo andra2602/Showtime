@@ -19,13 +19,7 @@ namespace Showtime.Repositories.Implementation
             return await _dbSet.Where(e => e.Genre == genre).ToListAsync();
         }
 
-        // Returns all bands for a specified festival
-        public async Task<IEnumerable<Band>> GetBandsFromFestival(Guid festivalId)
-        {
-            return await _dbSet
-                .Where(b => b.Festivals.Any(f => f.Id == festivalId))
-                .ToListAsync();
-        }
+       
 
 
     }

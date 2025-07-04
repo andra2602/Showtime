@@ -138,17 +138,17 @@ Hoverable = "true">
 
 
 @code {
-    private List<Band> _bands = new();          // lista completă
-    private List<Band> filteredBands = new();   // lista filtrată
+    private List<Band> _bands = new();         
+    private List<Band> filteredBands = new();  
     private string searchTerm = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         _bands = (await BandRepo.GetAllAsync()).ToList();
-        filteredBands = _bands; // inițial, arătăm tot
+        filteredBands = _bands; 
     }
 
-    private Task FilterBands(string value)
+    private void FilterBands(string value)
     {
         searchTerm = value;
 
@@ -162,8 +162,6 @@ Hoverable = "true">
                 .Where(b => b.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
-
-        return Task.CompletedTask;
     }
 
     private void NavigateToCreate()

@@ -20,8 +20,9 @@ namespace Showtime.Entities
 
         public string Description { get; set; } = string.Empty;
 
-        public ICollection<Band> Bands { get; set; } = [];
         public ICollection<Booking> Bookings { get; set; } = [];
+        public ICollection<FestivalBand> FestivalBands { get; set; } = [];
+
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

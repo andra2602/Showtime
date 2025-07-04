@@ -8,9 +8,30 @@ namespace Showtime.Context
         public ShowTimeContext(DbContextOptions<ShowTimeContext> options) : base(options) { }
 
         public DbSet<Band> Bands { get; set; }
-        //public DbSet<Member> Members { get; set; }
+      
         public DbSet<Festival> Festivals { get; set; }
         public DbSet<Booking> Bookings { get; set; }
-       // public DbSet<FestivalUser> FestivalUsers { get; set; }
+
+        public DbSet<FestivalBand> FestivalBands { get; set; }
+     
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<FestivalBand>()
+                .HasKey(fb => new { fb.FestivalId, fb.BandId });
+
+            modelBuilder.Entity<FestivalBand>()
+                .HasOne(fb => fb.Festival)
+                .WithMany(b => b.FestivalBands)
+                .HasForeignKey(fb => fb.FestivalId);
+
+
+            modelBuilder.Entity<FestivalBand>()
+                .HasOne(fb => fb.Band)
+                .WithMany(b => b.FestivalBands)
+                .HasForeignKey(fb => fb.BandId);
+
+        }
     }
 }

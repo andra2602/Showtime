@@ -3,6 +3,7 @@
 @using Showtime.Entities
 @inject NavigationManager NavigationManager
 @inject IRepositoryFestival FestivalRepository
+@inject IRepositoryBand BandRepo
 
 <h3>Details</h3>
 <style>
@@ -70,6 +71,10 @@
         }
 </style>
 
+
+
+
+
 @if (festival == null)
 {
     <p><em>Loading...</em></p>
@@ -92,6 +97,13 @@ else
     </Blazorise.Card>
 
 }
+
+
+<h3>Festival LineUp</h3>
+<Button Class="btn-back mb-3" @onclick="NavigateToChangeLineup">
+    Change Lineup
+</Button>
+
 @code {
     [Parameter]
     public Guid Id { get; set; }
@@ -107,5 +119,11 @@ else
     {
         NavigationManager.NavigateTo("/festivals");
     }
+
+    private void NavigateToChangeLineup()
+    {
+        NavigationManager.NavigateTo($"/festivals/lineup/{Id}");
+    }
+
 
 }

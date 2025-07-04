@@ -10,8 +10,8 @@ namespace Showtime.Entities
         [Required(ErrorMessage = "Band name is required.")]
         public string Name { get; set; } = string.Empty;
         public Genre Genre { get; set; }
+        public ICollection<FestivalBand> FestivalBands { get; set; } = [];
 
-        public ICollection<Festival> Festivals { get; set; } = [];
 
     }
 }

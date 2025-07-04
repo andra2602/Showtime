@@ -1,0 +1,57 @@
+﻿@page "/festivals/lineup/{Id:guid}"
+@using Showtime.Repositories.Interfaces
+@using Showtime.Entities
+@inject NavigationManager NavigationManager
+@inject IRepositoryFestival FestivalRepository
+@inject IRepositoryBand BandRepo
+
+<h3>Change Lineup</h3>
+
+<DropContainer TItem="BandItem" Items="@items" ItemsFilter="OnItemFilter" ItemDropped="@ItemDropped" Flex="Flex.Wrap.Grow.Is1">
+    <ChildContent>
+        <DropZone TItem="BandItem" AllowReorder Reordered="@Reordered" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
+            <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">Artists to plan</Heading>
+        </DropZone>
+        <DropZone TItem="BandItem" AllowReorder Reordered="@Reordered" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
+            <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">Artists comming</Heading>
+        </DropZone>
+    </ChildContent>
+</DropContainer>
+
+<Div>
+    @reorderStatus
+</Div>
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    public class BandItem{
+        public Band Band { get; set;}
+        public string Group;
+    }
+
+    private List<BandItem> items = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var festival = await FestivalRepository.GetByIdAsync(Id);
+
+        if (festival != null && festival.FestivalBands != null)
+        {
+            items = festival.FestivalBands.ToList();
+        }
+    }
+   
+    private Task ItemDropped(DraggableDroppedEventArgs<BandItem> dropItem)
+    {
+        return Task.CompletedTask;
+    }
+
+    string reorderStatus = "";
+
+    private Task Reordered(DropZoneOrder<BandItem> order)
+    {
+
+        return Task.CompletedTask;
+    }
+}

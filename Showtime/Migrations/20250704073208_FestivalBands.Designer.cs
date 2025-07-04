@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Showtime.Context;
 
@@ -11,9 +12,11 @@ using Showtime.Context;
 namespace Showtime.Migrations
 {
     [DbContext(typeof(ShowTimeContext))]
-    partial class ShowTimeContextModelSnapshot : ModelSnapshot
+    [Migration("20250704073208_FestivalBands")]
+    partial class FestivalBands
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -100,9 +103,6 @@ namespace Showtime.Migrations
 
                     b.Property<Guid>("BandId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
 
                     b.HasKey("FestivalId", "BandId");
 
