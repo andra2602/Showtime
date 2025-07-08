@@ -20,6 +20,7 @@ builder.Services.AddDbContext<ShowTimeContext>(options =>
 builder.Services.AddScoped<IRepositoryBand, RepositoryBand>();
 builder.Services.AddScoped<IRepositoryBooking, RepositoryBooking>();
 builder.Services.AddScoped<IRepositoryFestival, RepositoryFestival>();
+builder.Services.AddScoped<IRepositoryFestivalBand, RepositoryFestivalBand>();
 
 builder.Services
     .AddBlazorise(options =>

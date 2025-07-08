@@ -19,8 +19,6 @@ namespace Showtime.Repositories.Implementation
             return await _dbSet.Where(e => e.Genre == genre).ToListAsync();
         }
 
-       
-
 
     }
 }

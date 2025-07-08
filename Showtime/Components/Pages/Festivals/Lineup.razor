@@ -1,57 +1,324 @@
 ﻿@page "/festivals/lineup/{Id:guid}"
-@using Showtime.Repositories.Interfaces
+@rendermode InteractiveServer
 @using Showtime.Entities
-@inject NavigationManager NavigationManager
-@inject IRepositoryFestival FestivalRepository
-@inject IRepositoryBand BandRepo
+@inject NavigationManager Navigation
+@using Showtime.Context
+@inject ShowTimeContext db
+@using Microsoft.EntityFrameworkCore
+@using System.Linq
 
-<h3>Change Lineup</h3>
-
-<DropContainer TItem="BandItem" Items="@items" ItemsFilter="OnItemFilter" ItemDropped="@ItemDropped" Flex="Flex.Wrap.Grow.Is1">
-    <ChildContent>
-        <DropZone TItem="BandItem" AllowReorder Reordered="@Reordered" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
-            <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">Artists to plan</Heading>
-        </DropZone>
-        <DropZone TItem="BandItem" AllowReorder Reordered="@Reordered" Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
-            <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">Artists comming</Heading>
-        </DropZone>
-    </ChildContent>
-</DropContainer>
-
-<Div>
-    @reorderStatus
-</Div>
-@code {
-    [Parameter]
-    public Guid Id { get; set; }
-
-    public class BandItem{
-        public Band Band { get; set;}
-        public string Group;
+<style>
+    h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.2rem;
+        color: #5e00a3;
+        text-align: center;
+        margin-bottom: 2rem;
     }
 
-    private List<BandItem> items = new();
+    .drop-container-custom {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .b-card,
+    .b-card-body {
+        background-color: #1e1e1e !important;
+        color: #f0f0f0 !important;
+    }
+
+    .b-card {
+        border: 1px solid #7a1fa2;
+        border-radius: 12px;
+        box-shadow: 0 0 12px rgba(122, 31, 162, 0.3);
+        transition: transform 0.2s ease;
+        width: 240px;
+    }
+
+        .b-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 16px rgba(122, 31, 162, 0.5);
+        }
+
+    .drop-zone-unplanned {
+        background: linear-gradient(145deg, #f8f0ff, #f3e9ff);
+        border: 2px dashed #c09fe7;
+        border-radius: 14px;
+        padding: 1rem;
+        min-height: 250px;
+        flex: 1;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 8px rgba(192, 159, 231, 0.2);
+        color: #4b2b69;
+    }
+
+        .drop-zone-unplanned:hover {
+            border-color: #ae7be9;
+            background: linear-gradient(145deg, #f0e0ff, #ebd5ff);
+            box-shadow: 0 0 15px rgba(192, 159, 231, 0.5);
+            transform: scale(1.01);
+        }
+
+    .drop-zone-planned {
+        background: linear-gradient(135deg, #f1e6ff, #e0d0ff);
+        border: 2px solid #d8a6ff;
+        border-radius: 14px;
+        padding: 1rem;
+        min-height: 250px;
+        flex: 1;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 12px rgba(200, 100, 255, 0.3);
+        color: #3f205a;
+    }
+
+        .drop-zone-planned:hover {
+            background: linear-gradient(135deg, #e9d7ff, #e2ccff);
+            border-color: #be90ff;
+            box-shadow: 0 0 18px rgba(180, 80, 255, 0.5);
+            transform: scale(1.02);
+        }
+
+
+
+    .btn-save,
+    .btn-cancel {
+        font-family: 'Montserrat', sans-serif;
+        padding: 0.6rem 1.4rem;
+        border-radius: 6px;
+        border: none;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .btn-save {
+        background-color: #7a1fa2;
+        color: #fff;
+    }
+
+        .btn-save:hover {
+            background-color: #5e00a3;
+            box-shadow: 0 0 10px #7a1fa2;
+            color: white;
+            transform: scale(1.05);
+        }
+
+    .btn-cancel {
+        background-color: #555;
+        color: #ddd;
+    }
+
+        .btn-cancel:hover {
+            background-color: #333;
+            color  : white;
+            transform: scale(1.05);
+        }
+
+    .alert-custom {
+        margin-top: 1.5rem;
+        font-weight: bold;
+        background-color: #1e1e1e;
+        border-left: 4px solid #7a1fa2;
+        color: #ddd;
+    }
+</style>
+
+<h3>Change Lineup for @Festival?.Name</h3>
+
+@if (Festival == null || Items == null)
+{
+    <p><em>Loading lineup data...</em></p>
+}
+else
+{
+    <DropContainer TItem="DropItem"
+                   Items="@Items"
+                   ItemsFilter="@( (item, zone) => item.Group == zone )"
+                   ItemDropped="@ItemDropped"
+                   ItemOrderChanged="@Reordered"
+                   Flex="Flex.Wrap.Grow.Is1"
+                   Class="my-4">
+
+        <ChildContent>
+            <DropZone TItem="DropItem" Name="Unplanned" Class="drop-zone-unplanned"
+                      Border="Border.Rounded" Background="Background.Light"
+                      Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
+                <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">Available Artists</Heading>
+            </DropZone>
+
+            <DropZone TItem="DropItem" Name="Planned" Class="drop-zone-planned"
+                      AllowReorder Reordered="@Reordered"
+                      Border="Border.Rounded" Background="Background.Light"
+                      Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
+                <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">Festival Lineup</Heading>
+            </DropZone>
+        </ChildContent>
+
+        <ItemTemplate>
+            <Card Shadow="Shadow.Default" Margin="Margin.Is2.OnY">
+                <CardBody>
+                    <strong>@context.Name</strong>
+                </CardBody>
+            </Card>
+        </ItemTemplate>
+    </DropContainer>
+
+    <div class="mt-4 d-flex justify-content-end">
+        <Button Class="btn-save" Clicked="@SaveChanges">Save Changes</Button>
+        <Button Class="btn-cancel ms-2" Clicked="@GoBack">Cancel</Button>
+
+    </div>
+
+    @if (!string.IsNullOrEmpty(StatusMessage))
+    {
+        <Alert Color="@StatusColor" Class="mt-3">@StatusMessage</Alert>
+    }
+}
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private Festival? Festival;
+    private List<DropItem> Items = new();
+    private string StatusMessage = "";
+    private Color StatusColor = Color.Info;
+
+    public class DropItem
+    {
+        public Guid BandId { get; set; }
+        public string Name { get; set; } = "";
+        public string Group { get; set; } = "Unplanned";
+        public int Order { get; set; }
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        var festival = await FestivalRepository.GetByIdAsync(Id);
+        await LoadFestivalData();
+    }
 
-        if (festival != null && festival.FestivalBands != null)
+    private async Task LoadFestivalData()
+    {
+        try
         {
-            items = festival.FestivalBands.ToList();
+            Festival = await db.Festivals!
+                .Include(f => f.FestivalBands!)
+                    .ThenInclude(fb => fb.Band)
+                .FirstOrDefaultAsync(f => f.Id == Id);
+
+            if (Festival == null)
+            {
+                Navigation.NavigateTo("/festivals");
+                return;
+            }
+
+            var allBands = await db.Bands!.ToListAsync();
+            var planned = Festival.FestivalBands ?? new List<FestivalBand>();
+            var plannedBands = planned.Select(fb => new DropItem
+                {
+                    BandId = fb.BandId,
+                    Name = fb.Band.Name,
+                    Group = "Planned",
+                    Order = fb.Order
+                });
+
+            var plannedIds = planned.Select(fb => fb.BandId).ToHashSet();
+            var unplannedBands = allBands
+                .Where(b => !plannedIds.Contains(b.Id))
+                .Select(b => new DropItem
+                    {
+                        BandId = b.Id,
+                        Name = b.Name,
+                        Group = "Unplanned",
+                        Order = 0
+                    });
+
+            Items = plannedBands.Concat(unplannedBands)
+                                .OrderBy(i => i.Group == "Planned" ? i.Order : int.MaxValue)
+                                .ThenBy(i => i.Name)
+                                .ToList();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error loading data: {ex.Message}";
+            StatusColor = Color.Danger;
         }
     }
-   
-    private Task ItemDropped(DraggableDroppedEventArgs<BandItem> dropItem)
+
+    private Task ItemDropped(DraggableDroppedEventArgs<DropItem> args)
     {
+        var item = args.Item;
+        item.Group = args.DropZoneName;
+
+      
+        if (item.Group == "Planned")
+        {
+            item.Order = Items.Where(i => i.Group == "Planned").Max(i => i.Order) + 1;
+        }
+        else
+        {
+            item.Order = 0;
+        }
+
+        StatusMessage = "Changes are pending. Don't forget to save!";
+        StatusColor = Color.Warning;
+
         return Task.CompletedTask;
     }
 
-    string reorderStatus = "";
 
-    private Task Reordered(DropZoneOrder<BandItem> order)
+    private Task Reordered(DropZoneOrder<DropItem> order)
     {
+        if (order.DestinationDropZoneName != "Planned") return Task.CompletedTask;
+
+        for (int i = 0; i < order.OrderedItems.Count; i++)
+        {
+            order.OrderedItems[i].Item.Order = i + 1;
+        }
+
+        StatusMessage = "Lineup reordered. Remember to save!";
+        StatusColor = Color.Warning;
 
         return Task.CompletedTask;
+    }
+
+
+    private async Task SaveChanges()
+    {
+        try
+        {
+            var lineup = await db.FestivalBands!
+                .Where(fb => fb.FestivalId == Festival!.Id)
+                .ToListAsync();
+
+            var planned = Items
+                .Where(i => i.Group == "Planned")
+                .Select((item, index) => new FestivalBand
+                    {
+                        FestivalId = Festival.Id,
+                        BandId = item.BandId,
+                        Order = index + 1
+                    })
+                .ToList();
+
+            db.FestivalBands!.RemoveRange(lineup);
+            await db.FestivalBands!.AddRangeAsync(planned);
+            await db.SaveChangesAsync();
+
+            StatusMessage = "Lineup saved successfully!";
+            StatusColor = Color.Success;
+            Navigation.NavigateTo($"/festivals/details/{Id}");
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = $"Error saving: {ex.Message}";
+            StatusColor = Color.Danger;
+        }
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo($"/festivals/details/{Id}");
     }
 }

@@ -69,6 +69,38 @@
             box-shadow: 0 0 10px #7a1fa2;
             transform: scale(1.05);
         }
+
+    .lineup-container {
+        background: linear-gradient(135deg, #f6edff, #ede2ff);
+        border: 1px solid #d6b3ff;
+        border-radius: 10px;
+        padding: 1rem 1.5rem;
+        box-shadow: 0 0 10px rgba(178, 102, 255, 0.2);
+        margin-bottom: 2rem;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .lineup-item {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.1rem;
+        color: #4b2b69;
+        margin: 0.4rem 0;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px dashed #d8a6ff;
+        padding-bottom: 0.3rem;
+    }
+
+    .band-name {
+        font-weight: bold;
+    }
+
+    .band-genre {
+        font-style: italic;
+        color: #7a1fa2;
+    }
 </style>
 
 
@@ -100,6 +132,23 @@ else
 
 
 <h3>Festival LineUp</h3>
+@if (festival?.FestivalBands != null && festival.FestivalBands.Any())
+{
+    <div class="lineup-container">
+        @foreach (var fb in festival.FestivalBands.OrderBy(fb => fb.Order))
+        {
+            <div class="lineup-item">
+                <span class="band-name">@fb.Band?.Name</span>
+                <span class="band-genre">(@fb.Band?.Genre)</span>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p class="text-muted">No lineup assigned yet.</p>
+}
+
 <Button Class="btn-back mb-3" @onclick="NavigateToChangeLineup">
     Change Lineup
 </Button>
@@ -112,7 +161,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        festival = await FestivalRepository.GetByIdAsync(Id);
+        festival = await FestivalRepository.GetByIdWithBandsAsync(Id);
     }
 
     private void GoBack()
