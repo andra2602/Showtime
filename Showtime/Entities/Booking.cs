@@ -13,7 +13,6 @@ namespace Showtime.Entities
         public Festival ?Festival { get; set; }
         public Guid FestivalId { get; set; }
 
-        //public FestivalUser FestivalUser { get; set; }
-        //public Guid FestivalUserId { get; set; }
+        
     }
 }

@@ -7,12 +7,43 @@ using Showtime.Context;
 using Microsoft.EntityFrameworkCore;
 using Showtime.Repositories.Interfaces;
 using Showtime.Repositories.Implementation;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Showtime.Components.Account;
+using Showtime.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+
+
+builder.Services.AddCascadingAuthenticationState();
+builder.Services.AddScoped<IdentityUserAccessor>();
+builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddScoped<AuthenticationStateProvider, IdentityRevalidatingAuthenticationStateProvider>();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = IdentityConstants.ApplicationScheme;
+    options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+})
+    .AddIdentityCookies();
+
+builder.Services.AddIdentityCore<ApplicationUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+})
+    .AddRoles<IdentityRole<Guid>>()
+    .AddEntityFrameworkStores<ShowTimeContext>()
+    .AddSignInManager()
+    .AddDefaultTokenProviders();
+
+builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+builder.Services.AddAuthorizationCore();
+
+builder.Services.AddAntiforgery();
 
 builder.Services.AddDbContext<ShowTimeContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnectionString")));
@@ -21,6 +52,7 @@ builder.Services.AddScoped<IRepositoryBand, RepositoryBand>();
 builder.Services.AddScoped<IRepositoryBooking, RepositoryBooking>();
 builder.Services.AddScoped<IRepositoryFestival, RepositoryFestival>();
 builder.Services.AddScoped<IRepositoryFestivalBand, RepositoryFestivalBand>();
+builder.Services.AddHttpContextAccessor();
 
 builder.Services
     .AddBlazorise(options =>
@@ -44,7 +76,7 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
-
+app.MapAdditionalIdentityEndpoints();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
