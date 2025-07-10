@@ -6,6 +6,6 @@ namespace Showtime.Repositories.Interfaces
     public interface IRepositoryBand : IRepositoryBase<Band>
     {
         Task<IEnumerable<Band>> GetByGenre(Genre genre);
-        Task<IEnumerable<Band>> GetBandsFromFestival(Guid festivalId);
+
     }
 }

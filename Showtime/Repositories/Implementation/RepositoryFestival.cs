@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Showtime.Context;
+
 using Showtime.Entities;
 using Showtime.Repositories.Interfaces;
 
@@ -25,6 +26,16 @@ namespace Showtime.Repositories.Implementation
                 .Where(f => f.Location.ToLower().Contains(location.ToLower()))
                 .ToListAsync();
         }
+
+        public async Task<Festival?> GetByIdWithBandsAsync(Guid id)
+        {
+            return await _context.Festivals!
+                .Include(f => f.FestivalBands!)
+                    .ThenInclude(fb => fb.Band)
+                .FirstOrDefaultAsync(f => f.Id == id);
+        }
+
+
 
 
     }

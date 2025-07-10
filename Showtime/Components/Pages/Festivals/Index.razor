@@ -9,6 +9,13 @@
 @using Blazorise.Icons.FontAwesome
 @inject NavigationManager NavigationManager
 
+@inject AuthenticationStateProvider AuthStateProvider
+@inject UserManager<ApplicationUser> UserManager
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+
+
 <h3>Festival List</h3>
 
 <style>
@@ -126,38 +133,52 @@ Hoverable="true">
                 @context.EndDate?.ToString("yyyy-MM-dd")
             </DisplayTemplate>
         </DataGridColumn>
+        <DataGridColumn TItem="Festival" Field="@nameof(Festival.Price)" Caption="Price"></DataGridColumn>
         <DataGridColumn TItem="Festival" Field="@nameof(Festival.Description)" Caption="Description"></DataGridColumn>
 
 
         <DataGridColumn TItem="Festival" Caption="Actions">
             <DisplayTemplate>
-                <a href="@($"festivals/edit/{context.Id}")">Edit</a>
                 <a href="@($"/festivals/details/{context.Id}")">Details</a>
-                <a href="@($"festivals/delete/{context.Id}")">Delete</a>
+                @if(isAdmin){
+                    <a href="@($"festivals/edit/{context.Id}")">Edit</a>
+                    <a href="@($"festivals/delete/{context.Id}")">Delete</a>
+                }
+
             </DisplayTemplate>
         </DataGridColumn>
     </DataGridColumns>
 </DataGrid>
-
-<div class="fab-container">
+@if (isAdmin)
+{
+    <div class="fab-container">
     <Button Color="Color.Primary" Type="ButtonType.Button" Clicked="@NavigateToCreate" Class="fab-button">
         <Blazorise.Icon Name="FontAwesomeIcons.Plus" />
     </Button>
 </div>
+}
 
 
 @code {
+    private bool isAdmin = false;
     private List<Festival> _festivals = new();
     private List<Festival> filteredFestivals = new();
     private string searchTerm = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(authState.User);
+
+        if (user != null)
+        {
+            isAdmin = await UserManager.IsInRoleAsync(user, "Admin");
+        }
         _festivals = (await FestivalRepo.GetAllAsync()).ToList();
         filteredFestivals = _festivals;
     }
 
-    private Task FilterFestivals(string value)
+    private void FilterFestivals(string value)
     {
         searchTerm = value;
 
@@ -171,8 +192,6 @@ Hoverable="true">
                 .Where(b => b.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
-
-        return Task.CompletedTask;
     }
 
     private void NavigateToCreate()

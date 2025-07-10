@@ -124,6 +124,13 @@
             </Field>
 
             <Field>
+                <Label>Festival Price:</Label>
+                <NumericEdit TValue="float" @bind-Value="Festival.Price" />
+                <ValidationMessage For="@(() => Festival.Price)" />
+            </Field>
+            
+
+            <Field>
                 <Label>Festival Description:</Label>
                 <TextEdit @bind-Text="Festival.Description" />
                 <ValidationMessage For="@(() => Festival.Description)" />

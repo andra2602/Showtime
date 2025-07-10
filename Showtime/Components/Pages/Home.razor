@@ -1,5 +1,6 @@
 ﻿@page "/"
-
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProvider
 <PageTitle>Home</PageTitle>
 
 
@@ -86,14 +87,25 @@
 
     <p class="lead mt-4">Discover your favorite bands, explore electrifying festivals, and prepare for an unforgettable musical experience.</p>
 
-    <div class="mt-5">
-        <a href="/bands" class="btn btn-primary btn-lg">
-            <Blazorise.Icon Name="FontAwesomeIcons.Music" /> &nbsp; Discover Bands
-        </a>
-        <a href="/festivals" class="btn btn-secondary btn-lg ms-3"> 
-            <Blazorise.Icon Name="FontAwesomeIcons.Fire" /> &nbsp; View Festivals 
-        </a> 
-    </div>
+    <AuthorizeView>
+        <Authorized>
+            <div class="mt-5">
+                <a href="/bands" class="btn btn-primary btn-lg">
+                    <Blazorise.Icon Name="FontAwesomeIcons.Music" /> &nbsp; Discover Bands
+                </a>
+                <a href="/festivals" class="btn btn-secondary btn-lg ms-3">
+                    <Blazorise.Icon Name="FontAwesomeIcons.Fire" /> &nbsp; View Festivals
+                </a>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <div class="mt-5">
+                <a href="/Account/Register" class="btn btn-primary btn-lg">
+                    <Blazorise.Icon Name="FontAwesomeIcons.UserPlus" /> &nbsp; Do you wanna see more? Register here!
+                </a>
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
 </div>
 
 @code {

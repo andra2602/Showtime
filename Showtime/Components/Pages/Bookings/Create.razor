@@ -1,0 +1,355 @@
+﻿@page "/bookings/create"
+@using Showtime.Entities
+@using Showtime.Repositories.Interfaces
+@using Blazorise
+@inject IRepositoryBooking BookingRepo
+@inject IRepositoryFestival FestivalRepo
+@inject NavigationManager NavigationManager
+
+@attribute [Authorize]
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@inject AuthenticationStateProvider AuthStateProvider
+@inject UserManager<ApplicationUser> UserManager
+
+@using Microsoft.AspNetCore.Identity
+
+
+
+<h3>Create Booking</h3>
+
+<style>
+    body {
+        background-color: #ffffff;
+        color: #000;
+        font-family: 'Montserrat', sans-serif;
+    }
+
+    h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.2rem;
+        color: #5e00a3;
+        text-align: center;
+        margin-bottom: 2rem;
+        margin-top: 1rem;
+    }
+
+    .form-container {
+        background-color: #fdfdfd;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 0 15px rgba(122, 31, 162, 0.1);
+        border-radius: 10px;
+        padding: 2rem;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .field-group {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    label {
+        font-weight: 600;
+        color: #5e00a3;
+        margin-bottom: 0.5rem;
+    }
+
+    .button-group {
+        display: flex;
+        justify-content: flex-end;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn-save {
+        background-color: #7a1fa2;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 0.6rem 1.5rem;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 0 8px rgba(122, 31, 162, 0.4);
+    }
+
+        .btn-save:hover {
+            background-color: #5e00a3;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 0 12px rgba(122, 31, 162, 0.7);
+        }
+
+    .btn-back {
+        background-color: #5e00a3;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        padding: 0.6rem 1.5rem;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 0 8px rgba(94, 0, 163, 0.4);
+    }
+
+        .btn-back:hover {
+            background-color: #7a1fa2;
+            color: white;
+            transform: scale(1.05);
+            box-shadow: 0 0 12px rgba(94, 0, 163, 0.7);
+        }
+
+    .festival-info {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .price-info {
+        background-color: #e8f5e8;
+        border: 1px solid #c3e6cb;
+        border-radius: 6px;
+        padding: 1rem;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: #155724;
+        font-weight: 600;
+    }
+</style>
+
+
+@if (showError)
+{
+    <Alert Color="Color.Danger"
+           IsDismissable="true"
+           ShowDismissButton="true"
+           Dismissed="() => showError = false"
+           Class="mt-3 mb-3 shadow-sm">
+        <strong>Error:</strong> @errorMessage
+    </Alert>
+
+}
+
+<EditForm Model="@Booking" OnValidSubmit="HandleSubmit">
+    <DataAnnotationsValidator />
+    <Blazorise.ValidationSummary />
+
+    <div class="form-container" style="position: relative; overflow: visible;">
+        <div class="field-group" style="display: flex; flex-direction: column; gap: 1rem;">
+
+            <Field>
+                <Label>Festival:</Label>
+                <Select TValue="Guid"
+                        SelectedValue="Booking.FestivalId"
+                        SelectedValueChanged="OnFestivalChanged">
+                    <SelectItem Value="Guid.Empty" Disabled="true">-- Please select a festival --</SelectItem>
+                    @foreach (var festival in Festivals)
+                    {
+                        <SelectItem Value="@festival.Id">@festival.Name - @festival.Location</SelectItem>
+                    }
+                </Select>
+                @if (SelectedFestival != null)
+                {
+                    <div class="festival-info">
+                        <strong>Festival Duration:</strong> @SelectedFestival.StartDate?.ToString("dd/MM/yyyy") - @SelectedFestival.EndDate?.ToString("dd/MM/yyyy")<br />
+                        <strong>Daily Price:</strong> @SelectedFestival.Price.ToString("C")
+                    </div>
+                }
+            </Field>
+
+            @if (SelectedFestival != null)
+            {
+                <Field>
+                    <Label>Start Date:</Label>
+                    <DatePicker Date="@Booking.StartDate"
+                                DateChanged="@(async (DateTime? date) => await OnStartDateChanged(date))"
+                                Min="@SelectedFestival.StartDate"
+                                Max="@SelectedFestival.EndDate" />
+                    <ValidationMessage For="@(() => Booking.StartDate)" />
+                </Field>
+
+                <Field>
+                    <Label>End Date:</Label>
+                    <DatePicker Date="@Booking.EndDate"
+                                DateChanged="@(async (DateTime? date) => await OnEndDateChanged(date))"
+                                Min="@GetMinEndDate()"
+                                Max="@SelectedFestival.EndDate" />
+                    <ValidationMessage For="@(() => Booking.EndDate)" />
+                </Field>
+
+                @if (Booking.StartDate != default && Booking.EndDate != default && Booking.EndDate > Booking.StartDate)
+                {
+                    <div class="price-info">
+                        <strong>Duration:</strong> @GetBookingDuration() day(s)<br />
+                        <strong>Total Price:</strong> @Booking.Price.ToString("C")
+                    </div>
+                }
+            }
+
+            <Field>
+                <Label>Booking Date:</Label>
+                <DatePicker @bind-Date="Booking.Date" />
+                <ValidationMessage For="@(() => Booking.Date)" />
+            </Field>
+
+        </div>
+
+        <div class="button-group">
+            <Button Class="btn-save" Type="ButtonType.Submit">Save</Button>
+            <Button Class="btn-back" Clicked="@GoBack">Back to the list</Button>
+        </div>
+    </div>
+</EditForm>
+
+
+@code {
+    private Booking Booking { get; set; } = new Booking
+        {
+            Date = DateTime.Today,
+            FestivalId = Guid.Empty,
+            StartDate = DateTime.Today,
+            EndDate = DateTime.Today.AddDays(1)
+        };
+
+    private List<Festival> Festivals { get; set; } = new();
+    private Festival? SelectedFestival { get; set; }
+
+    private bool showError = false;
+    private string errorMessage = string.Empty;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var fetchedFestivals = await FestivalRepo.GetAllAsync();
+        Festivals = fetchedFestivals.ToList();
+    }
+
+    private void OnFestivalChanged(Guid newFestivalId)
+    {
+        Booking.FestivalId = newFestivalId;
+        SelectedFestival = Festivals.FirstOrDefault(f => f.Id == newFestivalId);
+
+        if (SelectedFestival != null)
+        {
+            // Set default booking dates to festival start date + 1 day
+            Booking.StartDate = SelectedFestival.StartDate ?? DateTime.Today;
+            Booking.EndDate = (SelectedFestival.StartDate ?? DateTime.Today).AddDays(1);
+
+            // Calculate initial price for 1 day
+            CalculatePrice();
+        }
+        else
+        {
+            Booking.StartDate = DateTime.Today;
+            Booking.EndDate = DateTime.Today.AddDays(1);
+            Booking.Price = 0;
+        }
+    }
+
+    private async Task OnStartDateChanged(DateTime? newStartDate)
+    {
+        if (newStartDate.HasValue)
+        {
+            Booking.StartDate = newStartDate.Value;
+            // Adjust end date if it's not after the new start date
+            if (Booking.EndDate <= newStartDate.Value)
+            {
+                Booking.EndDate = newStartDate.Value.AddDays(1);
+            }
+            CalculatePrice();
+            StateHasChanged(); // Force UI update
+        }
+    }
+
+    private async Task OnEndDateChanged(DateTime? newEndDate)
+    {
+        if (newEndDate.HasValue)
+        {
+            Booking.EndDate = newEndDate.Value;
+            CalculatePrice();
+            StateHasChanged(); // Force UI update
+        }
+    }
+
+    private void CalculatePrice()
+    {
+        if (SelectedFestival != null && Booking.StartDate != default && Booking.EndDate != default && Booking.EndDate > Booking.StartDate)
+        {
+            var duration = (Booking.EndDate - Booking.StartDate).Days;
+            Booking.Price = duration * SelectedFestival.Price;
+        }
+        else
+        {
+            Booking.Price = 0;
+        }
+    }
+
+    private DateTime GetMinEndDate()
+    {
+        return Booking.StartDate.AddDays(1);
+    }
+
+    private int GetBookingDuration()
+    {
+        if (Booking.StartDate != default && Booking.EndDate != default)
+        {
+            return (Booking.EndDate - Booking.StartDate).Days;
+        }
+        return 0;
+    }
+
+    private async Task HandleSubmit()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(authState.User);
+
+        if (user == null)
+        {
+            NavigationManager.NavigateTo("/Account/Login");
+            return;
+        }
+
+        if (Booking.FestivalId == Guid.Empty)
+        {
+            showError = true;
+            errorMessage = "You must select a festival before submitting the booking.";
+            await Task.Delay(1);
+            return;
+        }
+
+        if (Booking.StartDate >= Booking.EndDate)
+        {
+            showError = true;
+            errorMessage = "End date must be after the start date.";
+            await Task.Delay(1);
+            return;
+        }
+
+        if (SelectedFestival != null)
+        {
+            if (Booking.StartDate < SelectedFestival.StartDate || Booking.EndDate > SelectedFestival.EndDate)
+            {
+                showError = true;
+                errorMessage = "Booking dates must be within the festival date range.";
+                await Task.Delay(1);
+                return;
+            }
+        }
+
+        Booking.Id = Guid.NewGuid();
+        Booking.UserId = user.Id;
+
+        await BookingRepo.AddAsync(Booking);
+        await BookingRepo.SaveChangesAsync();
+
+        NavigationManager.NavigateTo("/bookings");
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/bookings");
+    }
+}

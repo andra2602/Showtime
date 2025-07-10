@@ -9,6 +9,13 @@
 @using Blazorise.Icons.FontAwesome
 @inject NavigationManager NavigationManager
 
+@inject AuthenticationStateProvider AuthStateProvider
+@inject UserManager<ApplicationUser> UserManager
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+
+
 <style> 
     h3 {
     font-family: 'Orbitron', sans-serif;
@@ -120,35 +127,51 @@ Hoverable = "true">
         <DataGridColumn TItem= "Band" Field="@nameof(Band.Name)" Caption="Band Name"></DataGridColumn>
         <DataGridColumn TItem= "Band" Field="@nameof(Band.Genre)" Caption="Band Genre"></DataGridColumn>
 
-        <DataGridColumn TItem= "Band" Caption="Actions">
+        <DataGridColumn TItem="Band" Caption="Actions">
             <DisplayTemplate>
-                <a href="@($"bands/edit/{context.Id}")">Edit</a>
                 <a href="@($"/bands/details/{context.Id}")">Details</a>
-                <a href="@($"bands/delete/{context.Id}")">Delete</a>
+                @if (isAdmin)
+                {
+                    <a href="@($"/bands/edit/{context.Id}")">Edit</a>
+                    <a href="@($"/bands/delete/{context.Id}")">Delete</a>
+                }
             </DisplayTemplate>
         </DataGridColumn>
+
     </DataGridColumns>
 </DataGrid>
 
-<div class="fab-container">
-    <Button Color="Color.Primary" Type="ButtonType.Button" Clicked="@NavigateToCreate" Class="fab-button">
-        <Blazorise.Icon Name="FontAwesomeIcons.Plus" />
-    </Button>
-</div>
+@if (isAdmin)
+{
+    <div class="fab-container">
+        <Button Color="Color.Primary" Type="ButtonType.Button" Clicked="@NavigateToCreate" Class="fab-button">
+            <Blazorise.Icon Name="FontAwesomeIcons.Plus" />
+        </Button>
+    </div>
+}
 
 
 @code {
-    private List<Band> _bands = new();          // lista completă
-    private List<Band> filteredBands = new();   // lista filtrată
+    private bool isAdmin = false;
+
+    private List<Band> _bands = new();         
+    private List<Band> filteredBands = new();  
     private string searchTerm = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(authState.User);
+
+        if (user != null)
+        {
+            isAdmin = await UserManager.IsInRoleAsync(user, "Admin");
+        }
         _bands = (await BandRepo.GetAllAsync()).ToList();
-        filteredBands = _bands; // inițial, arătăm tot
+        filteredBands = _bands; 
     }
 
-    private Task FilterBands(string value)
+    private void FilterBands(string value)
     {
         searchTerm = value;
 
@@ -162,8 +185,6 @@ Hoverable = "true">
                 .Where(b => b.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
-
-        return Task.CompletedTask;
     }
 
     private void NavigateToCreate()

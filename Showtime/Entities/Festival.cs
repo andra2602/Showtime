@@ -18,10 +18,15 @@ namespace Showtime.Entities
         [Required]
         public DateTime ?EndDate { get; set; }
 
+        [Required]
+        [Range(0, 10000)]
+        public float Price { get; set; }
+
         public string Description { get; set; } = string.Empty;
 
-        public ICollection<Band> Bands { get; set; } = [];
         public ICollection<Booking> Bookings { get; set; } = [];
+        public ICollection<FestivalBand> FestivalBands { get; set; } = [];
+
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
