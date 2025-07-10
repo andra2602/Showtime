@@ -1,78 +1,71 @@
 ﻿@using Microsoft.AspNetCore.Components.Authorization
 @inject NavigationManager NavigationManager
 
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Showtime</a>
+<nav class="top-nav @(IsUserAuthenticated() ? "connected" : "")">
+    <div class="nav-left">
+        <a class="nav-brand" href="">Showtime</a>
     </div>
-</div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+    <div class="nav-center">
+        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+            <span class="bi bi-house-door-fill-nav-menu"></span> Home
+        </NavLink>
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
         <AuthorizeView>
             <Authorized>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="bands" Match="NavLinkMatch.All">
-                <Blazorise.Icon Name="FontAwesomeIcons.Music" /> &nbsp; Bands
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="festivals" Match="NavLinkMatch.All">
-                <Blazorise.Icon Name="FontAwesomeIcons.Fire" /> &nbsp; Festivals
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="bookings" Match="NavLinkMatch.All">
-                <Blazorise.Icon Name="FontAwesomeIcons.Ticket" /> &nbsp; Bookings
-            </NavLink>
-                </div>
+                <NavLink class="nav-link" href="bands">
+                    <Blazorise.Icon Name="FontAwesomeIcons.Music" /> Bands
+                </NavLink>
+                <NavLink class="nav-link" href="festivals">
+                    <Blazorise.Icon Name="FontAwesomeIcons.Fire" /> Festivals
+                </NavLink>
+                <NavLink class="nav-link" href="bookings">
+                    <Blazorise.Icon Name="FontAwesomeIcons.Ticket" /> Bookings
+                </NavLink>
             </Authorized>
         </AuthorizeView>
+    </div>
 
+    <div class="nav-right">
         <AuthorizeView>
             <Authorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Manage">
-                        <Blazorise.Icon Name="FontAwesomeIcons.User" /> &nbsp;  @context.User.Identity?.Name
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <form action="Account/Logout" method="post">
-                        <AntiforgeryToken />
-                        <input type="hidden" name="ReturnUrl" value="" />
-                        <button type="submit" class="nav-link">
-                            <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
-                        </button>
-                    </form>
-                </div>
+                <NavLink class="nav-link" href="Account/Manage">
+                    <Blazorise.Icon Name="FontAwesomeIcons.User" /> @context.User.Identity?.Name
+                </NavLink>
+                <form action="Account/Logout" method="post" class="logout-form">
+                    <AntiforgeryToken />
+                    <input type="hidden" name="ReturnUrl" value="" />
+                    <button type="submit" class="nav-link btn-link">
+                        <span class="bi bi-arrow-bar-left-nav-menu"></span> Logout
+                    </button>
+                </form>
             </Authorized>
             <NotAuthorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Register">
-                        <Blazorise.Icon Name="FontAwesomeIcons.UserPlus" aria-hidden="true"></Blazorise.Icon> &nbsp; Register
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="Account/Login">
-                        <span class="bi bi-person-badge-nav-menu" aria-hidden="true"></span> Login
-                    </NavLink>
-                </div>
+                <NavLink class="nav-link" href="Account/Register">
+                    <Blazorise.Icon Name="FontAwesomeIcons.UserPlus" /> Register
+                </NavLink>
+                <NavLink class="nav-link" href="Account/Login">
+                    <span class="bi bi-person-badge-nav-menu"></span> Login
+                </NavLink>
             </NotAuthorized>
         </AuthorizeView>
-    </nav>
-</div>
+    </div>
+</nav>
+
+
 
 @code {
     private string? currentUrl;
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthenticationStateTask { get; set; }
+
+    private bool IsUserAuthenticated()
+    {
+        if (AuthenticationStateTask == null) return false;
+
+        var authState = AuthenticationStateTask.Result;
+        return authState.User.Identity?.IsAuthenticated ?? false;
+    }
 
     protected override void OnInitialized()
     {

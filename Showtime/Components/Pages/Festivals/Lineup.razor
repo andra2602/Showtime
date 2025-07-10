@@ -8,12 +8,20 @@
 @using System.Linq
 
 <style>
+    body {
+        background: url('/images/laser.jpg') no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Montserrat', sans-serif;
+        color: #e0e0e0;
+    }
+
     h3 {
         font-family: 'Orbitron', sans-serif;
         font-size: 2.2rem;
-        color: #5e00a3;
+        color: #ffffff;
         text-align: center;
         margin-bottom: 2rem;
+        text-shadow: 0 0 10px #FF00FF, 0 0 20px #FF00FF;
     }
 
     .drop-container-custom {
@@ -24,63 +32,41 @@
         padding: 1rem;
     }
 
-    .b-card,
-    .b-card-body {
-        background-color: #1e1e1e !important;
-        color: #f0f0f0 !important;
-    }
-
     .b-card {
+        background-color: rgba(30, 30, 30, 0.9) !important;
         border: 1px solid #7a1fa2;
         border-radius: 12px;
         box-shadow: 0 0 12px rgba(122, 31, 162, 0.3);
         transition: transform 0.2s ease;
         width: 240px;
+        color: #f0f0f0 !important;
     }
 
         .b-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 16px rgba(122, 31, 162, 0.5);
+            transform: scale(1.03);
+            box-shadow: 0 0 18px rgba(122, 31, 162, 0.5);
         }
 
-    .drop-zone-unplanned {
-        background: linear-gradient(145deg, #f8f0ff, #f3e9ff);
-        border: 2px dashed #c09fe7;
-        border-radius: 14px;
-        padding: 1rem;
-        min-height: 250px;
-        flex: 1;
-        transition: all 0.3s ease;
-        box-shadow: 0 0 8px rgba(192, 159, 231, 0.2);
-        color: #4b2b69;
-    }
-
-        .drop-zone-unplanned:hover {
-            border-color: #ae7be9;
-            background: linear-gradient(145deg, #f0e0ff, #ebd5ff);
-            box-shadow: 0 0 15px rgba(192, 159, 231, 0.5);
-            transform: scale(1.01);
-        }
-
+    .drop-zone-unplanned,
     .drop-zone-planned {
-        background: linear-gradient(135deg, #f1e6ff, #e0d0ff);
-        border: 2px solid #d8a6ff;
+        background-color: rgba(20, 20, 20, 0.9);
+        border: 2px dashed #7a1fa2;
         border-radius: 14px;
-        padding: 1rem;
+        padding: 1.5rem;
         min-height: 250px;
         flex: 1;
         transition: all 0.3s ease;
-        box-shadow: 0 0 12px rgba(200, 100, 255, 0.3);
-        color: #3f205a;
+        box-shadow: 0 0 12px rgba(122, 31, 162, 0.2);
+        color: #ffffff;
     }
 
+        .drop-zone-unplanned:hover,
         .drop-zone-planned:hover {
-            background: linear-gradient(135deg, #e9d7ff, #e2ccff);
             border-color: #be90ff;
-            box-shadow: 0 0 18px rgba(180, 80, 255, 0.5);
-            transform: scale(1.02);
+            background-color: rgba(35, 35, 35, 0.95);
+            transform: scale(1.01);
+            box-shadow: 0 0 18px rgba(122, 31, 162, 0.5);
         }
-
 
 
     .btn-save,
@@ -96,34 +82,47 @@
     .btn-save {
         background-color: #7a1fa2;
         color: #fff;
+        box-shadow: 0 0 8px rgba(122, 31, 162, 0.4);
     }
 
         .btn-save:hover {
             background-color: #5e00a3;
-            box-shadow: 0 0 10px #7a1fa2;
-            color: white;
+            box-shadow: 0 0 12px rgba(122, 31, 162, 0.7);
             transform: scale(1.05);
         }
 
     .btn-cancel {
-        background-color: #555;
+        background-color: #444;
         color: #ddd;
+        box-shadow: 0 0 6px rgba(255, 255, 255, 0.1);
     }
 
         .btn-cancel:hover {
             background-color: #333;
-            color  : white;
+            color: white;
             transform: scale(1.05);
         }
 
     .alert-custom {
         margin-top: 1.5rem;
         font-weight: bold;
-        background-color: #1e1e1e;
+        background-color: rgba(30, 30, 30, 0.95);
         border-left: 4px solid #7a1fa2;
         color: #ddd;
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(122, 31, 162, 0.3);
+    }
+
+    .heading-zone {
+        font-family: 'Orbitron', sans-serif;
+        color: #fff;
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        text-shadow: 0 0 6px #cc00cc;
     }
 </style>
+
 
 <h3>Change Lineup for @Festival?.Name</h3>
 
@@ -142,18 +141,23 @@ else
                    Class="my-4">
 
         <ChildContent>
-            <DropZone TItem="DropItem" Name="Unplanned" Class="drop-zone-unplanned"
-                      Border="Border.Rounded" Background="Background.Light"
+            <DropZone TItem="DropItem" Name="Unplanned"
+                      Class="drop-zone-unplanned"
                       Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
-                <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">Available Artists</Heading>
+                <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom" Class="heading-zone">
+                    Available Artists
+                </Heading>
             </DropZone>
 
-            <DropZone TItem="DropItem" Name="Planned" Class="drop-zone-planned"
+            <DropZone TItem="DropItem" Name="Planned"
+                      Class="drop-zone-planned"
                       AllowReorder Reordered="@Reordered"
-                      Border="Border.Rounded" Background="Background.Light"
                       Padding="Padding.Is3" Margin="Margin.Is3" Flex="Flex.Grow.Is1">
-                <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom">Festival Lineup</Heading>
+                <Heading Size="HeadingSize.Is4" Margin="Margin.Is3.FromBottom" Class="heading-zone">
+                    Festival Lineup
+                </Heading>
             </DropZone>
+
         </ChildContent>
 
         <ItemTemplate>

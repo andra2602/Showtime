@@ -19,14 +19,28 @@
 <h3>Festival List</h3>
 
 <style>
-    h3 {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 2.2rem;
-    color: #5e00a3;
-    text-align: center;
-    margin-bottom: 2rem;
-    position: relative;
+    body {
+        background: url('/images/laser.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: #e0e0e0;
+        font-family: 'Montserrat', sans-serif;
     }
+
+    h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.2rem;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 2rem;
+        text-shadow: 0 0 10px #FF00FF, 0 0 20px #FF00FF;
+    }
+
+    .grid-wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 1rem;
+    }
+
     /* Action buttons styling */
     .b-datagrid td a[href*="edit"],
     .b-datagrid td a[href*="details"],
@@ -102,6 +116,64 @@
     font-size: 24px;
     }
 
+    .b-datagrid {
+        background-color: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        overflow: hidden;
+    }
+
+        .b-datagrid th,
+        .b-datagrid td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.02);
+            padding: 0.75rem;
+            font-family: 'Montserrat', sans-serif;
+            font-style: italic;
+            color: #ffffff;
+            font-size: 1rem;
+        }
+
+            .b-datagrid td:last-child,
+            .b-datagrid th:last-child {
+                border-right: none; /* Eliminăm marginea din ultima coloană */
+            }
+
+        .b-datagrid th {
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+    .b-input {
+        background-color: #1a1a1a;
+        border: 1px solid #444;
+        border-radius: 6px;
+        color: white;
+        padding: 0.5rem 1rem;
+        font-family: 'Montserrat', sans-serif;
+        font-size: 0.95rem;
+        box-shadow: 0 0 5px rgba(255, 255, 255, 0.1);
+        transition: all 0.3s ease;
+    }
+
+        .b-input::placeholder {
+            color: #ccc;
+            opacity: 0.7;
+        }
+
+        .b-input:focus {
+            border-color: #00ffff;
+            background-color: #1a1a1a;
+            color: white;
+            outline: none;
+            box-shadow: 0 0 8px #00ffff;
+        }
 </style>
 
 <div style="max-width: 400px; margin: 0 auto 1.5rem auto;">
@@ -111,6 +183,7 @@
     Class="b-input" />
 </div>
 
+<div class="grid-wrapper">
 <DataGrid TItem="Festival"
 Data="@filteredFestivals"
 ShowPager="true"
@@ -149,6 +222,7 @@ Hoverable="true">
         </DataGridColumn>
     </DataGridColumns>
 </DataGrid>
+</div>
 @if (isAdmin)
 {
     <div class="fab-container">

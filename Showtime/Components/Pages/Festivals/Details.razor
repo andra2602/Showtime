@@ -11,101 +11,118 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.AspNetCore.Identity
 
-<h3>Details</h3>
+<h3>Festival Details</h3>
 <style>
     body {
-    background-color: #fff;
-    color: #f0f0f0;
-    font-family: 'Montserrat', sans-serif;
+        background: url('/images/laser.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: #e0e0e0;
+        font-family: 'Montserrat', sans-serif;
     }
 
     h3 {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 2.2rem;
-    color: #5e00a3;
-    text-align: center;
-    margin-bottom: 2rem;
-    position: relative;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 2.2rem;
+        color: #fff;
+        text-align: center;
+        margin-bottom: 2rem;
+        text-shadow: 0 0 10px #FF00FF, 0 0 20px #FF00FF;
     }
 
-    .b-card {
-    background-color: #1e1e1e;
-    border: 1px solid #7a1fa2;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(122, 31, 162, 0.3);
-    max-width: 600px;
-    margin: 0 auto 2rem auto;
-    color: #fff;
+
+    .mb-3 {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        overflow: hidden;
+        padding: 0.75rem;
+        font-family: 'Montserrat', sans-serif;
+        font-style: italic;
+        color: #ffffff;
+        max-width: 900px;
+        margin: 0 auto 1rem auto;
     }
 
-    .b-card-header {
-    background-color: #2a2a2a;
-    border-bottom: 1px solid #7a1fa2;
+    .d-flex.justify-content-end {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
+
 
     .b-card-title {
-    font-family: 'Orbitron', sans-serif;
-    font-size: 1.5rem;
-    color: #ffffff;
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.5rem;
+        color: #ffffff;
+        text-shadow: 0 0 8px #ffffffaa;
     }
 
     .b-card-body p {
-    font-size: 1.1rem;
-    color: #ccc;
-    }
-
-    .b-card-footer {
-    background-color: #2a2a2a;
-    border-top: 1px solid #7a1fa2;
+        font-size: 1.1rem;
+        color: #ffffff;
+        font-style: italic;
     }
 
     .btn-back {
-    background-color: #7a1fa2;
-    color: #fff;
-    font-weight: bold;
-    padding: 0.5rem 1.2rem;
-    border-radius: 6px;
-    border: none;
-    transition: all 0.3s ease;
+        background-color: #7a1fa2;
+        color: #fff;
+        font-weight: bold;
+        padding: 0.5rem 1.2rem;
+        border-radius: 6px;
+        border: none;
+        font-family: 'Orbitron', sans-serif;
+        transition: all 0.3s ease;
     }
 
-    .btn-back:hover {
-    background-color: #5e00a3;
-    color: #fff;
-    box-shadow: 0 0 10px #7a1fa2;
-    transform: scale(1.05);
-    }
+        .btn-back:hover {
+            background-color: #5e00a3;
+            color: #fff;
+            box-shadow: 0 0 10px #7a1fa2;
+            transform: scale(1.05);
+            cursor: pointer;}
 
     .lineup-container {
-    background: linear-gradient(135deg, #f6edff, #ede2ff);
-    border: 1px solid #d6b3ff;
-    border-radius: 10px;
-    padding: 1rem 1.5rem;
-    box-shadow: 0 0 10px rgba(178, 102, 255, 0.2);
-    margin-bottom: 2rem;
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
+        background-color: rgba(255, 255, 255, 0.05); /* ca restul cardurilor */
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: 0 0 15px rgba(122, 31, 162, 0.1);
+        max-width: 600px;
+        margin: 0 auto 2rem auto;
+        font-family: 'Montserrat', sans-serif;
+        font-style: italic;
+        color: #ffffff;
     }
+
 
     .lineup-item {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.1rem;
-    color: #4b2b69;
-    margin: 0.4rem 0;
-    display: flex;
-    justify-content: space-between;
-    border-bottom: 1px dashed #d8a6ff;
-    padding-bottom: 0.3rem;
+        display: flex;
+        justify-content: space-between;
+        padding: 0.5rem 0;
+        border-bottom: 1px dashed rgba(255, 255, 255, 0.15);
+        font-size: 1.1rem;
+        color: #e0e0e0;
     }
+
 
     .band-name {
-    font-weight: bold;
+        font-weight: bold;
+        color: #ffffff;
+        text-shadow: 0 0 5px #7a1fa2;
     }
 
+
     .band-genre {
-    font-style: italic;
-    color: #7a1fa2;
+        font-style: italic;
+        color: #ff77ff;
+        text-shadow: 0 0 5px #cc00ff55;
+    }
+
+    .lineup-button-wrapper {
+        display: flex;
+        justify-content: flex-end;
+        margin: 0 1rem;
+        margin-bottom: 2rem;
     }
 </style>
 
@@ -158,9 +175,10 @@ else
 @if (isAdmin)
 {
 
+     <div class="lineup-button-wrapper">
     <Button Class="btn-back mb-3" @onclick="NavigateToChangeLineup">
         Change Lineup
-    </Button>
+    </Button></div>
 
 }
 
