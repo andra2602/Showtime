@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Showtime.Components.Account;
 using Showtime.Entities;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,5 +80,42 @@ app.UseAntiforgery();
 app.MapAdditionalIdentityEndpoints();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var roleManager = services.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+
+    string[] roleNames = { "Admin", "User" };
+    foreach (var roleName in roleNames)
+    {
+        if (!await roleManager.RoleExistsAsync(roleName))
+        {
+            await roleManager.CreateAsync(new IdentityRole<Guid>(roleName));
+        }
+    }
+
+    var adminEmail = "admin@showtime.com";
+    var adminPassword = "Parola123!"; 
+
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    if (adminUser == null)
+    {
+        adminUser = new ApplicationUser
+        {
+            UserName = adminEmail,
+            Email = adminEmail,
+            EmailConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(adminUser, adminPassword);
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, "Admin");
+        }
+    }
+}
 
 app.Run();

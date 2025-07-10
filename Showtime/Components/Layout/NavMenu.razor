@@ -16,7 +16,8 @@
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </NavLink>
         </div>
-
+        <AuthorizeView>
+            <Authorized>
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="bands" Match="NavLinkMatch.All">
                 <Blazorise.Icon Name="FontAwesomeIcons.Music" /> &nbsp; Bands
@@ -30,10 +31,12 @@
         </div>
 
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="bookings/create" Match="NavLinkMatch.All">
+            <NavLink class="nav-link" href="bookings" Match="NavLinkMatch.All">
                 <Blazorise.Icon Name="FontAwesomeIcons.Ticket" /> &nbsp; Bookings
             </NavLink>
-        </div>
+                </div>
+            </Authorized>
+        </AuthorizeView>
 
         <AuthorizeView>
             <Authorized>
@@ -45,7 +48,7 @@
                 <div class="nav-item px-3">
                     <form action="Account/Logout" method="post">
                         <AntiforgeryToken />
-                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                        <input type="hidden" name="ReturnUrl" value="" />
                         <button type="submit" class="nav-link">
                             <span class="bi bi-arrow-bar-left-nav-menu" aria-hidden="true"></span> Logout
                         </button>
@@ -55,7 +58,7 @@
             <NotAuthorized>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="Account/Register">
-                        <span class="bi bi-person-nav-menu" aria-hidden="true"></span> Register
+                        <Blazorise.Icon Name="FontAwesomeIcons.UserPlus" aria-hidden="true"></Blazorise.Icon> &nbsp; Register
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">

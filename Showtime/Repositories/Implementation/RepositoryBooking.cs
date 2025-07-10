@@ -41,5 +41,13 @@ namespace Showtime.Repositories.Implementation
                 .CountAsync(b => b.FestivalId == festivalId);
         }
 
+        public async Task<IEnumerable<Booking>> GetBookingsByUserIdAsync(Guid userId)
+        {
+            return await _context.Bookings
+                .Include(b => b.Festival)
+                .Where(b => b.UserId == userId)
+                .ToListAsync();
+        }
+
     }
 }

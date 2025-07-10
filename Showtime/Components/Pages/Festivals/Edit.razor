@@ -139,6 +139,11 @@ else
             <DateEdit @bind-Date="festivalToEdit.EndDate" />
             <ValidationMessage For="@(() => festivalToEdit.EndDate)" />
         </Field>
+        <Field>
+            <Label>Festival Price:</Label>
+            <NumericEdit TValue="float" @bind-Value="festivalToEdit.Price" />
+            <ValidationMessage For="@(() => festivalToEdit.Price)" />
+        </Field>
 
         <Field>
             <Label>Description</Label>
@@ -154,6 +159,7 @@ else
 }
 
 @code {
+
     [Parameter]
     public Guid Id { get; set; }
 
@@ -166,7 +172,7 @@ else
 
         if (originalFestival != null)
         {
-            
+
             festivalToEdit = new Festival
                 {
                     Id = originalFestival.Id,
@@ -174,6 +180,7 @@ else
                     Location = originalFestival.Location,
                     StartDate = originalFestival.StartDate,
                     EndDate = originalFestival.EndDate,
+                    Price = originalFestival.Price,
                     Description = originalFestival.Description
                 };
         }
@@ -188,6 +195,8 @@ else
         originalFestival.Location = festivalToEdit.Location;
         originalFestival.StartDate = festivalToEdit.StartDate;
         originalFestival.EndDate = festivalToEdit.EndDate;
+
+        originalFestival.Price = festivalToEdit.Price;
         originalFestival.Description = festivalToEdit.Description;
 
         FestivalRepository.Update(originalFestival);

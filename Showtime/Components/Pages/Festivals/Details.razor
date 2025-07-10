@@ -5,101 +5,107 @@
 @inject IRepositoryFestival FestivalRepository
 @inject IRepositoryBand BandRepo
 
+@inject AuthenticationStateProvider AuthStateProvider
+@inject UserManager<ApplicationUser> UserManager
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+
 <h3>Details</h3>
 <style>
     body {
-        background-color: #fff;
-        color: #f0f0f0;
-        font-family: 'Montserrat', sans-serif;
+    background-color: #fff;
+    color: #f0f0f0;
+    font-family: 'Montserrat', sans-serif;
     }
 
     h3 {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 2.2rem;
-        color: #5e00a3;
-        text-align: center;
-        margin-bottom: 2rem;
-        position: relative;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2.2rem;
+    color: #5e00a3;
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
     }
 
     .b-card {
-        background-color: #1e1e1e;
-        border: 1px solid #7a1fa2;
-        border-radius: 10px;
-        box-shadow: 0 0 20px rgba(122, 31, 162, 0.3);
-        max-width: 600px;
-        margin: 0 auto 2rem auto;
-        color: #fff;
+    background-color: #1e1e1e;
+    border: 1px solid #7a1fa2;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(122, 31, 162, 0.3);
+    max-width: 600px;
+    margin: 0 auto 2rem auto;
+    color: #fff;
     }
 
     .b-card-header {
-        background-color: #2a2a2a;
-        border-bottom: 1px solid #7a1fa2;
+    background-color: #2a2a2a;
+    border-bottom: 1px solid #7a1fa2;
     }
 
     .b-card-title {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 1.5rem;
-        color: #ffffff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    color: #ffffff;
     }
 
     .b-card-body p {
-        font-size: 1.1rem;
-        color: #ccc;
+    font-size: 1.1rem;
+    color: #ccc;
     }
 
     .b-card-footer {
-        background-color: #2a2a2a;
-        border-top: 1px solid #7a1fa2;
+    background-color: #2a2a2a;
+    border-top: 1px solid #7a1fa2;
     }
 
     .btn-back {
-        background-color: #7a1fa2;
-        color: #fff;
-        font-weight: bold;
-        padding: 0.5rem 1.2rem;
-        border-radius: 6px;
-        border: none;
-        transition: all 0.3s ease;
+    background-color: #7a1fa2;
+    color: #fff;
+    font-weight: bold;
+    padding: 0.5rem 1.2rem;
+    border-radius: 6px;
+    border: none;
+    transition: all 0.3s ease;
     }
 
-        .btn-back:hover {
-            background-color: #5e00a3;
-            color: #fff;
-            box-shadow: 0 0 10px #7a1fa2;
-            transform: scale(1.05);
-        }
+    .btn-back:hover {
+    background-color: #5e00a3;
+    color: #fff;
+    box-shadow: 0 0 10px #7a1fa2;
+    transform: scale(1.05);
+    }
 
     .lineup-container {
-        background: linear-gradient(135deg, #f6edff, #ede2ff);
-        border: 1px solid #d6b3ff;
-        border-radius: 10px;
-        padding: 1rem 1.5rem;
-        box-shadow: 0 0 10px rgba(178, 102, 255, 0.2);
-        margin-bottom: 2rem;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
+    background: linear-gradient(135deg, #f6edff, #ede2ff);
+    border: 1px solid #d6b3ff;
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    box-shadow: 0 0 10px rgba(178, 102, 255, 0.2);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
     }
 
     .lineup-item {
-        font-family: 'Montserrat', sans-serif;
-        font-size: 1.1rem;
-        color: #4b2b69;
-        margin: 0.4rem 0;
-        display: flex;
-        justify-content: space-between;
-        border-bottom: 1px dashed #d8a6ff;
-        padding-bottom: 0.3rem;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    color: #4b2b69;
+    margin: 0.4rem 0;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px dashed #d8a6ff;
+    padding-bottom: 0.3rem;
     }
 
     .band-name {
-        font-weight: bold;
+    font-weight: bold;
     }
 
     .band-genre {
-        font-style: italic;
-        color: #7a1fa2;
+    font-style: italic;
+    color: #7a1fa2;
     }
 </style>
 
@@ -121,6 +127,7 @@ else
             <p><strong>Location: </strong> @festival.Location</p>
             <p><strong>StartDate: </strong> @festival.StartDate?.ToString("yyyy-MM-dd") </p>
             <p><strong>EndDate: </strong>  @festival.EndDate?.ToString("yyyy-MM-dd") </p>
+            <p><strong>Price: </strong> @festival.Price</p>
             <p><strong>Description: </strong> @festival.Description</p>
         </CardBody>
         <CardFooter Class="d-flex justify-content-end">
@@ -148,12 +155,19 @@ else
 {
     <p class="text-muted">No lineup assigned yet.</p>
 }
+@if (isAdmin)
+{
 
-<Button Class="btn-back mb-3" @onclick="NavigateToChangeLineup">
-    Change Lineup
-</Button>
+    <Button Class="btn-back mb-3" @onclick="NavigateToChangeLineup">
+        Change Lineup
+    </Button>
+
+}
 
 @code {
+
+    private bool isAdmin = false;
+
     [Parameter]
     public Guid Id { get; set; }
 
@@ -161,6 +175,14 @@ else
 
     protected override async Task OnInitializedAsync()
     {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = await UserManager.GetUserAsync(authState.User);
+
+        if (user != null)
+        {
+            isAdmin = await UserManager.IsInRoleAsync(user, "Admin");
+        }
+
         festival = await FestivalRepository.GetByIdWithBandsAsync(Id);
     }
 
