@@ -8,41 +8,50 @@
 
 <style>
     body {
-        background-color: #fff;
-        color: rgba(204, 0, 68, 0.8);
+        background: url('/images/laser.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: #e0e0e0;
         font-family: 'Montserrat', sans-serif;
     }
 
     h3 {
         font-family: 'Orbitron', sans-serif;
         font-size: 2.2rem;
-        color: #000;
+        color: #fff;
         text-align: center;
         margin-bottom: 2rem;
-        position: relative;
+        text-shadow: 0 0 10px #FF00FF, 0 0 20px #FF00FF;
     }
 
-
-    .b-card {
-        background-color: #fff;
-        border: 1px solid #cc0044;
+    .mb-3 {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 10px;
-        box-shadow: 0 0 20px rgba(204, 0, 68, 0.3);
-        max-width: 600px;
-        margin: 0 auto 2rem auto;
-        color: #000;
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        overflow: hidden;
+        padding: 0.75rem;
+        font-family: 'Montserrat', sans-serif;
+        font-style: italic;
+        color: #ffffff;
+        max-width: 900px;
+        margin: 0 auto 1rem auto;
     }
 
-    .b-card-header {
-        background-color: #fff;
-        border-bottom: 1px solid #cc0044;
+    .b-card-header,
+    .b-card-footer {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 0.75rem 1.2rem;
     }
+
 
     .b-card-title {
         font-family: 'Orbitron', sans-serif;
         font-size: 1.5rem;
-        color: #cc0044;
+        color: #ffffff;
         text-align: center;
+        text-shadow: 0 0 6px #cc0044, 0 0 10px #cc0044;
     }
 
     .b-card-body p {
@@ -50,10 +59,7 @@
         color: #ccc;
     }
 
-    .b-card-footer {
-        background-color: #fff;
-        border-top: 1px solid #cc0044;
-    }
+
 
     .btn-delete {
         background-color: #cc0044;
@@ -89,6 +95,7 @@
             transform: scale(1.05);
         }
 </style>
+
 
 @if (festival == null)
 {

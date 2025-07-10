@@ -7,49 +7,52 @@
 <h3>Band Details</h3>
 <style>
     body {
-        background-color: #fff;
-        color: #f0f0f0;
+        background: url('/images/confetti.jpg') no-repeat center center fixed;
+        background-size: cover;
+        color: #e0e0e0;
         font-family: 'Montserrat', sans-serif;
     }
 
     h3 {
         font-family: 'Orbitron', sans-serif;
         font-size: 2.2rem;
-        color: #5e00a3;
+        color: #fff;
         text-align: center;
         margin-bottom: 2rem;
-        position: relative;
+        text-shadow: 0 0 10px #FF00FF, 0 0 20px #FF00FF;
     }
 
-    .b-card {
-        background-color: #1e1e1e;
-        border: 1px solid #7a1fa2;
+    .mb-3 {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.1);
         border-radius: 10px;
-        box-shadow: 0 0 20px rgba(122, 31, 162, 0.3);
-        max-width: 600px;
-        margin: 0 auto 2rem auto;
-        color: #fff;
+        box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+        overflow: hidden;
+        padding: 0.75rem;
+        font-family: 'Montserrat', sans-serif;
+        font-style: italic;
+        color: #ffffff;
+        max-width: 900px;
+        margin: 0 auto 1rem auto; 
     }
 
-    .b-card-header {
-        background-color: #2a2a2a;
-        border-bottom: 1px solid #7a1fa2;
+    .d-flex.justify-content-end {
+        background-color: rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
+
 
     .b-card-title {
         font-family: 'Orbitron', sans-serif;
         font-size: 1.5rem;
         color: #ffffff;
+        text-shadow: 0 0 8px #ffffffaa;
     }
 
     .b-card-body p {
         font-size: 1.1rem;
-        color: #ccc;
-    }
-
-    .b-card-footer {
-        background-color: #2a2a2a;
-        border-top: 1px solid #7a1fa2;
+        color: #ffffff; 
+        font-style: italic;
     }
 
     .btn-back {
@@ -59,6 +62,7 @@
         padding: 0.5rem 1.2rem;
         border-radius: 6px;
         border: none;
+        font-family: 'Orbitron', sans-serif;
         transition: all 0.3s ease;
     }
 
@@ -67,8 +71,10 @@
             color: #fff;
             box-shadow: 0 0 10px #7a1fa2;
             transform: scale(1.05);
+            cursor: pointer;
         }
 </style>
+
 
 @if (band == null)
 {
@@ -78,9 +84,9 @@ else
 {
     <Blazorise.Card Class="mb-3">
         <CardHeader>
-            <CardTitle>@band.Name</CardTitle>
+            <CardTitle Class="b-card-title">@band.Name</CardTitle>
         </CardHeader>
-        <CardBody>
+        <CardBody Class="b-card-body">
             <p><strong>Genre:</strong> @band.Genre</p>
         </CardBody>
         <CardFooter Class="d-flex justify-content-end">
